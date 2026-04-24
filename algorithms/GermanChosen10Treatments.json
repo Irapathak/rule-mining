@@ -1,0 +1,10 @@
+{"condition": {"foreign_worker": "yes"}, "treatment": {"status": "no checking account"}, "utility": 0.1609434666797203, "coverage": 96.3}
+{"condition": {"foreign_worker": "yes"}, "treatment": {"present_residence": 4}, "utility": 0.0606400396288997, "coverage": 96.3}
+{"condition": {"people_liable": 1}, "treatment": {"status": "no checking account"}, "utility": 0.1456534231777806, "coverage": 84.5}
+{"condition": {"people_liable": 1}, "treatment": {"present_residence": 4}, "utility": 0.0792691930701009, "coverage": 84.5}
+{"condition": {"foreign_worker": "yes"}, "treatment": {"job": "skilled employee/official"}, "utility": 0.0438617750020949, "coverage": 96.3}
+{"condition": {"amount": 0}, "treatment": {"present_residence": 4}, "utility": 0.0583449383353281, "coverage": 75.4}
+{"condition": {"amount": 0}, "treatment": {"status": "no checking account"}, "utility": 0.2666168488147544, "coverage": 75.4}
+{"condition": {"foreign_worker": "yes"}, "treatment": {"savings": "unknown/no savings account"}, "utility": 0.136413199822179, "coverage": 96.3}
+{"condition": {"foreign_worker": "yes"}, "treatment": {"number_credits": 1}, "utility": 0.0141856580375866, "coverage": 96.3}
+{"condition": {"people_liable": 1}, "treatment": {"savings": "unknown/no savings account"}, "utility": 0.1299251808028739, "coverage": 84.5}

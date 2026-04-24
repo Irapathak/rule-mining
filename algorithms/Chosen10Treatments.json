@@ -1,0 +1,10 @@
+{"condition": {"SexualOrientation": "Straight or heterosexual"}, "treatment": {"FormalEducation": "Bachelor’s degree (BA, BS, B.Eng., etc.)"}, "utility": 4998.529528806329, "coverage": 92.8890994262856}
+{"condition": {"SexualOrientation": "Straight or heterosexual"}, "treatment": {"UndergradMajor": "Mathematics or statistics"}, "utility": 9502.254256964088, "coverage": 92.8890994262856}
+{"condition": {"Student": "No"}, "treatment": {"DevType": "Data scientist or machine learning specialist"}, "utility": 6275.812166472234, "coverage": 83.46491920627402}
+{"condition": {"Student": "No"}, "treatment": {"UndergradMajor": "Mathematics or statistics"}, "utility": 9804.219077017537, "coverage": 83.46491920627402}
+{"condition": {"SexualOrientation": "Straight or heterosexual"}, "treatment": {"DevType": "C-suite executive (CEO, CTO, etc.)"}, "utility": 21803.13171127514, "coverage": 92.8890994262856}
+{"condition": {"RaceEthnicity": "White or of European descent"}, "treatment": {"FormalEducation": "Master’s degree (MA, MS, M.Eng., MBA, etc.)"}, "utility": 7131.957621001564, "coverage": 77.62513816516659}
+{"condition": {"Gender": "Male"}, "treatment": {"FormalEducation": "Other doctoral degree (Ph.D, Ed.D., etc.)"}, "utility": 12482.432002738817, "coverage": 92.4048634138639}
+{"condition": {"RaceEthnicity": "White or of European descent"}, "treatment": {"DevType": "Back-end developer"}, "utility": 4342.765943598912, "coverage": 77.62513816516659}
+{"condition": {"Student": "No"}, "treatment": {"UndergradMajor": "Computer science, computer engineering, or software engineering"}, "utility": 503.37099898872566, "coverage": 83.46491920627402}
+{"condition": {"Gender": "Male"}, "treatment": {"DevType": "Back-end developer"}, "utility": 2165.2870610197488, "coverage": 92.4048634138639}

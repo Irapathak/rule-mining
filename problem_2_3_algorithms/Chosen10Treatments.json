@@ -1,0 +1,10 @@
+{"condition": {"Gender": "Male"}, "treatment": {"Exercise": "Daily or almost every day"}, "utility": 11626.7669663907, "coverage": 92.4048634138639}
+{"condition": {"SexualOrientation": "Straight or heterosexual"}, "treatment": {"FormalEducation": "Other doctoral degree (Ph.D, Ed.D., etc.)"}, "utility": 17285.5265273147, "coverage": 92.8890994262856}
+{"condition": {"Student": "No"}, "treatment": {"DevType": "Engineering manager"}, "utility": 43992.6198563447, "coverage": 83.464919206274}
+{"condition": {"RaceEthnicity": "White or of European descent"}, "treatment": {"UndergradMajor": "A natural science (ex. biology, chemistry, physics)"}, "utility": 7078.58432722891, "coverage": 77.6251381651665}
+{"condition": {"Student": "No"}, "treatment": {"FormalEducation": "Other doctoral degree (Ph.D, Ed.D., etc.)"}, "utility": 26000.0589707737, "coverage": 83.464919206274}
+{"condition": {"RaceEthnicity": "White or of European descent"}, "treatment": {"DevType": "Engineering manager"}, "utility": 57551.4186242146, "coverage": 77.6251381651665}
+{"condition": {"Student": "No"}, "treatment": {"Exercise": "3 - 4 times per week"}, "utility": 23905.4004367021, "coverage": 83.464919206274}
+{"condition": {"SexualOrientation": "Straight or heterosexual"}, "treatment": {"Exercise": "3 - 4 times per week"}, "utility": 23651.206409513, "coverage": 92.8890994262856}
+{"condition": {"Dependents": "No"}, "treatment": {"HoursComputer": "5 - 8 hours"}, "utility": 16564.5940017969, "coverage": 69.7615663982315}
+{"condition": {"Gender": "Male"}, "treatment": {"UndergradMajor": "A humanities discipline (ex. literature, history, philosophy)"}, "utility": 16320.1585864002, "coverage": 92.4048634138639}

@@ -1,0 +1,1101 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Smallest Epsilon - Benchmark Results</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+        .subtitle { font-size: 1.2em; opacity: 0.9; }
+        .content { padding: 40px; }
+        .table-scroll {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 15px 0;
+        }
+        .table-scroll table {
+            width: max-content;
+            min-width: 100%;
+            margin: 0;
+        }
+        
+        .insight-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .insight-box h3 { margin-bottom: 15px; font-size: 1.3em; }
+        .insight-box .formula {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-family: 'Courier New', monospace;
+            margin-top: 10px;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .summary-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        .summary-card h3 {
+            font-size: 0.85em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .summary-card .value {
+            font-size: 2.2em;
+            font-weight: bold;
+        }
+        
+        h2 {
+            color: #f5576c;
+            border-bottom: 3px solid #f5576c;
+            padding-bottom: 10px;
+            margin: 40px 0 20px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: visible;
+            font-size: 0.9em;
+        }
+        thead {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        th {
+            padding: 12px 10px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8em;
+            letter-spacing: 0.5px;
+        }
+        tbody tr { transition: all 0.2s; }
+        tbody tr:nth-child(even) { background: #f8f9fa; }
+        tbody tr:hover {
+            background: #ffe0f0;
+            transform: scale(1.005);
+        }
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        .badge-homogeneous {
+            background: #d4edda;
+            color: #155724;
+        }
+        .badge-heterogeneous {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .badge-runtime {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        .badge-oracle {
+            background: #e2e3e5;
+            color: #383d41;
+            font-weight: bold;
+        }
+        
+        .highlight {
+            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        .rule-group {
+            margin: 30px 0;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .rule-header {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            font-weight: bold;
+            color: #495057;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+        
+        .emoji { font-size: 1.2em; }
+        
+        .glossary {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+        .glossary h3 {
+            color: #495057;
+            margin-bottom: 20px;
+        }
+        .glossary-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .glossary-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e9ecef;
+            line-height: 1.6;
+        }
+        .glossary-table tr:last-child td {
+            border-bottom: none;
+        }
+        .glossary-table .metric-name {
+            font-weight: bold;
+            color: #495057;
+            width: 30%;
+            background: #f8f9fa;
+        }
+        .glossary-table .metric-desc {
+            color: #6c757d;
+        }
+        .glossary-table .formula-code {
+            background: #e9ecef;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #495057;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><span class="emoji">🎯</span> Find Smallest Epsilon - Benchmark Results</h1>
+            <p class="subtitle">Two-Phase Search Algorithm (Exponential + Binary)</p>
+            <p class="subtitle" style="font-size: 0.9em; margin-top: 10px;">
+                30 Experiments | 10 Rules | 3 Delta Values | Runtime: 432.75 minutes
+            </p>
+        </header>
+        
+        <div class="content">
+            <div class="insight-box">
+                <h3><span class="emoji">💡</span> Algorithm Overview</h3>
+                <p><strong>Phase 1: Exponential Search</strong> - Quickly find upper bound by doubling epsilon</p>
+                <p><strong>Phase 2: Binary Search</strong> - Refine to find exact smallest epsilon</p>
+                <div class="formula">
+                    <strong>largest ε (heterogeneous)</strong> = <strong>smallest ε (homogeneous)</strong> - 1
+                </div>
+                <p style="margin-top: 10px;">
+                    Above ε*, the rule is homogeneous. At ε* - 1, violations exist.
+                </p>
+            </div>
+            
+            <div class="glossary">
+                <h3><span class="emoji">📖</span> Metrics Glossary - How Each Column is Calculated</h3>
+                <div class="table-scroll">
+                <table class="glossary-table">
+                    <tr>
+                        <td class="metric-name">Delta (δ)</td>
+                        <td class="metric-desc">
+                            <strong>Fixed Input Parameter.</strong> The minimum subgroup size threshold. 
+                            All candidate subgroups must contain at least δ individuals to be evaluated.
+                            <br><span class="formula-code">Input: User-specified value</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="metric-name">Smallest ε (Homogeneous)</td>
+                        <td class="metric-desc">
+                            <strong>Algorithm Output.</strong> The smallest epsilon threshold where the rule becomes homogeneous 
+                            (no subgroups violate the threshold). This is the primary result we're searching for.
+                            <br><span class="formula-code">Found via: Exponential search + Binary search</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="metric-name">Largest ε (Heterogeneous)</td>
+                        <td class="metric-desc">
+                            <strong>Derived Metric.</strong> The largest epsilon value where violations still exist. 
+                            Due to monotonicity, this is exactly one less than the smallest homogeneous epsilon.
+                            <br><span class="formula-code">Calculation: smallest_ε_homogeneous - 1</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="metric-name">Oracle Calls</td>
+                        <td class="metric-desc">
+                            <strong>Efficiency Metric.</strong> Total number of times we invoked the homogeneity oracle 
+                            (FPGrowth algorithm) to check if a rule is homogeneous at a given epsilon. 
+                            Lower is better; indicates search efficiency.
+                            <br><span class="formula-code">Count: Total calls to FPGrowth oracle during binary search (plus one upper-bound check)</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="metric-name">Runtime (seconds)</td>
+                        <td class="metric-desc">
+                            <strong>Performance Metric.</strong> Wall-clock time (in seconds) to complete the entire 
+                            binary search for this specific rule and delta combination (ε ∈ [0, ε_max]).
+                            <br><span class="formula-code">Measurement: end_time - start_time</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="metric-name">Dataset Size</td>
+                        <td class="metric-desc">
+                            <strong>Context Information.</strong> The total number of rows (individuals) in the dataset 
+                            for this particular rule. Larger datasets may require more computation per oracle call.
+                            <br><span class="formula-code">Value: len(dataframe)</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="metric-name">Rule ID</td>
+                        <td class="metric-desc">
+                            <strong>Identifier.</strong> Unique numerical identifier for each treatment-condition pair being tested.
+                            <br><span class="formula-code">Value: 1, 2, 3, ...</span>
+                        </td>
+                    </tr>
+                </table>
+                </div>
+            </div>
+            
+            <h2><span class="emoji">📊</span> Performance Summary</h2>
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <h3>Total Experiments</h3>
+                    <div class="value">30</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Avg Runtime</h3>
+                    <div class="value">865.49s</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Avg Oracle Calls</h3>
+                    <div class="value">18.8</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Min Oracle Calls</h3>
+                    <div class="value">11</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Max Oracle Calls</h3>
+                    <div class="value">23</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Total Runtime</h3>
+                    <div class="value">432.7m</div>
+                </div>
+            </div>
+            
+            <h2><span class="emoji">📋</span> Detailed Results</h2>
+
+            <div class="rule-group">
+                <div class="rule-header">
+                    <span class="emoji">📌</span> Rule 1: {'Gender': 'Male'} → {'Exercise': 'Daily or almost every day'}
+                </div>
+                <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Delta (δ)</th>
+                            <th>Smallest ε*<br/>(Achieves Homogeneity)</th>
+                            <th>Violating Subgroup<br/>(Reason for Boundary)</th>
+                            <th>Phase 1<br/>(Bracketing)</th>
+                            <th>Phase 2<br/>(Binary Search)</th>
+                            <th>Total<br/>Oracle Calls</th>
+                            <th>Runtime</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td><strong>2,000</strong></td>
+                            <td><span class="badge badge-homogeneous">18,519</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'UndergradMajor': '2', 'GINI': '1', 'Continent': ...</strong><br/>
+                        Size: 2096<br/>
+                        Pop ATE: 4370.84 | Sub ATE: -14148.00<br/>
+                        |Diff|: <strong>18518.84</strong> (needs ε ≥ 18,519)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">6</span></td>
+                            <td><span class="badge badge-oracle">15</span></td>
+                            <td><span class="badge badge-oracle">21</span></td>
+                            <td><span class="badge badge-runtime">5702.43s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>4,000</strong></td>
+                            <td><span class="badge badge-homogeneous">11,898</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'UndergradMajor': '2', 'GINI': '1', 'HoursCompute...</strong><br/>
+                        Size: 4401<br/>
+                        Pop ATE: 4370.84 | Sub ATE: -7526.41<br/>
+                        |Diff|: <strong>11897.26</strong> (needs ε ≥ 11,898)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">5</span></td>
+                            <td><span class="badge badge-oracle">14</span></td>
+                            <td><span class="badge badge-oracle">19</span></td>
+                            <td><span class="badge badge-runtime">180.09s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>6,000</strong></td>
+                            <td><span class="badge badge-homogeneous">10,603</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'GDP': '1', 'FormalEducation': '1'}</strong><br/>
+                        Size: 6166<br/>
+                        Pop ATE: 4370.84 | Sub ATE: -6231.28<br/>
+                        |Diff|: <strong>10602.12</strong> (needs ε ≥ 10,603)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">5</span></td>
+                            <td><span class="badge badge-oracle">14</span></td>
+                            <td><span class="badge badge-oracle">19</span></td>
+                            <td><span class="badge badge-runtime">91.65s</span></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                </div>
+            </div>
+
+            <div class="rule-group">
+                <div class="rule-header">
+                    <span class="emoji">📌</span> Rule 2: {'SexualOrientation': 'Straight or heterosexual'} → {'FormalEducation': 'Other doctoral degree (Ph.D, Ed.D., etc.)'}
+                </div>
+                <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Delta (δ)</th>
+                            <th>Smallest ε*<br/>(Achieves Homogeneity)</th>
+                            <th>Violating Subgroup<br/>(Reason for Boundary)</th>
+                            <th>Phase 1<br/>(Bracketing)</th>
+                            <th>Phase 2<br/>(Binary Search)</th>
+                            <th>Total<br/>Oracle Calls</th>
+                            <th>Runtime</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td><strong>2,000</strong></td>
+                            <td><span class="badge badge-homogeneous">34,111</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'GDP': '1', 'GINI': '1', 'Continent': '1', 'Age':...</strong><br/>
+                        Size: 2053<br/>
+                        Pop ATE: 13046.87 | Sub ATE: -21063.60<br/>
+                        |Diff|: <strong>34110.47</strong> (needs ε ≥ 34,111)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">7</span></td>
+                            <td><span class="badge badge-oracle">16</span></td>
+                            <td><span class="badge badge-oracle">23</span></td>
+                            <td><span class="badge badge-runtime">5216.82s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>4,000</strong></td>
+                            <td><span class="badge badge-homogeneous">18,055</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Gender': '1', 'GINI': '1', 'Dependents': '2', 'C...</strong><br/>
+                        Size: 7267<br/>
+                        Pop ATE: 13046.87 | Sub ATE: -5007.58<br/>
+                        |Diff|: <strong>18054.45</strong> (needs ε ≥ 18,055)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">6</span></td>
+                            <td><span class="badge badge-oracle">15</span></td>
+                            <td><span class="badge badge-oracle">21</span></td>
+                            <td><span class="badge badge-runtime">111.01s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>6,000</strong></td>
+                            <td><span class="badge badge-homogeneous">13,522</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'GINI': '1', 'Continent': '1'}</strong><br/>
+                        Size: 10458<br/>
+                        Pop ATE: 13046.87 | Sub ATE: -474.49<br/>
+                        |Diff|: <strong>13521.36</strong> (needs ε ≥ 13,522)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">5</span></td>
+                            <td><span class="badge badge-oracle">14</span></td>
+                            <td><span class="badge badge-oracle">19</span></td>
+                            <td><span class="badge badge-runtime">34.28s</span></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                </div>
+            </div>
+
+            <div class="rule-group">
+                <div class="rule-header">
+                    <span class="emoji">📌</span> Rule 3: {'Student': 'No'} → {'DevType': 'Engineering manager'}
+                </div>
+                <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Delta (δ)</th>
+                            <th>Smallest ε*<br/>(Achieves Homogeneity)</th>
+                            <th>Violating Subgroup<br/>(Reason for Boundary)</th>
+                            <th>Phase 1<br/>(Bracketing)</th>
+                            <th>Phase 2<br/>(Binary Search)</th>
+                            <th>Total<br/>Oracle Calls</th>
+                            <th>Runtime</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td><strong>2,000</strong></td>
+                            <td><span class="badge badge-homogeneous">11,246</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Dependents': '2', 'HDI': '1'}</strong><br/>
+                        Size: 17248<br/>
+                        Pop ATE: 27949.37 | Sub ATE: 39194.47<br/>
+                        |Diff|: <strong>11245.10</strong> (needs ε ≥ 11,246)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">5</span></td>
+                            <td><span class="badge badge-oracle">14</span></td>
+                            <td><span class="badge badge-oracle">19</span></td>
+                            <td><span class="badge badge-runtime">4763.39s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>4,000</strong></td>
+                            <td><span class="badge badge-homogeneous">4,211</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Gender': '1', 'HDI': '1', 'Hobby': '1'}</strong><br/>
+                        Size: 19451<br/>
+                        Pop ATE: 27949.37 | Sub ATE: 32159.93<br/>
+                        |Diff|: <strong>4210.56</strong> (needs ε ≥ 4,211)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">4</span></td>
+                            <td><span class="badge badge-oracle">13</span></td>
+                            <td><span class="badge badge-oracle">17</span></td>
+                            <td><span class="badge badge-runtime">191.26s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>6,000</strong></td>
+                            <td><span class="badge badge-homogeneous">0</span></td>
+                            <td><span style="color: #999;">No violation found</span></td>
+                            <td><span class="badge badge-oracle">1</span></td>
+                            <td><span class="badge badge-oracle">10</span></td>
+                            <td><span class="badge badge-oracle">11</span></td>
+                            <td><span class="badge badge-runtime">14.66s</span></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                </div>
+            </div>
+
+            <div class="rule-group">
+                <div class="rule-header">
+                    <span class="emoji">📌</span> Rule 4: {'RaceEthnicity': 'White or of European descent'} → {'UndergradMajor': 'A natural science (ex. biology, chemistry, physics)'}
+                </div>
+                <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Delta (δ)</th>
+                            <th>Smallest ε*<br/>(Achieves Homogeneity)</th>
+                            <th>Violating Subgroup<br/>(Reason for Boundary)</th>
+                            <th>Phase 1<br/>(Bracketing)</th>
+                            <th>Phase 2<br/>(Binary Search)</th>
+                            <th>Total<br/>Oracle Calls</th>
+                            <th>Runtime</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td><strong>2,000</strong></td>
+                            <td><span class="badge badge-homogeneous">28,764</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'GDP': '1', 'GINI': '1', 'Continent': '1', 'Age':...</strong><br/>
+                        Size: 2029<br/>
+                        Pop ATE: 1810.02 | Sub ATE: 30574.00<br/>
+                        |Diff|: <strong>28763.97</strong> (needs ε ≥ 28,764)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">6</span></td>
+                            <td><span class="badge badge-oracle">15</span></td>
+                            <td><span class="badge badge-oracle">21</span></td>
+                            <td><span class="badge badge-runtime">5180.13s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>4,000</strong></td>
+                            <td><span class="badge badge-homogeneous">10,505</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'GDP': '1', 'Continent': '1', 'SexualOrientation'...</strong><br/>
+                        Size: 4729<br/>
+                        Pop ATE: 1810.02 | Sub ATE: 12314.12<br/>
+                        |Diff|: <strong>10504.09</strong> (needs ε ≥ 10,505)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">5</span></td>
+                            <td><span class="badge badge-oracle">14</span></td>
+                            <td><span class="badge badge-oracle">19</span></td>
+                            <td><span class="badge badge-runtime">146.27s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>6,000</strong></td>
+                            <td><span class="badge badge-homogeneous">6,442</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Age': '1'}</strong><br/>
+                        Size: 6210<br/>
+                        Pop ATE: 1810.02 | Sub ATE: -4631.70<br/>
+                        |Diff|: <strong>6441.72</strong> (needs ε ≥ 6,442)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">4</span></td>
+                            <td><span class="badge badge-oracle">13</span></td>
+                            <td><span class="badge badge-oracle">17</span></td>
+                            <td><span class="badge badge-runtime">53.53s</span></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                </div>
+            </div>
+
+            <div class="rule-group">
+                <div class="rule-header">
+                    <span class="emoji">📌</span> Rule 5: {'Student': 'No'} → {'FormalEducation': 'Other doctoral degree (Ph.D, Ed.D., etc.)'}
+                </div>
+                <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Delta (δ)</th>
+                            <th>Smallest ε*<br/>(Achieves Homogeneity)</th>
+                            <th>Violating Subgroup<br/>(Reason for Boundary)</th>
+                            <th>Phase 1<br/>(Bracketing)</th>
+                            <th>Phase 2<br/>(Binary Search)</th>
+                            <th>Total<br/>Oracle Calls</th>
+                            <th>Runtime</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td><strong>2,000</strong></td>
+                            <td><span class="badge badge-homogeneous">38,141</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'GINI': '1', 'Continent': '1', 'Hobby': '1', 'Cou...</strong><br/>
+                        Size: 2756<br/>
+                        Pop ATE: 15003.91 | Sub ATE: -23136.31<br/>
+                        |Diff|: <strong>38140.23</strong> (needs ε ≥ 38,141)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">7</span></td>
+                            <td><span class="badge badge-oracle">16</span></td>
+                            <td><span class="badge badge-oracle">23</span></td>
+                            <td><span class="badge badge-runtime">344.25s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>4,000</strong></td>
+                            <td><span class="badge badge-homogeneous">15,133</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'GINI': '1', 'HDI': '1', 'HoursComputer': '2', 'H...</strong><br/>
+                        Size: 5271<br/>
+                        Pop ATE: 15003.91 | Sub ATE: -128.65<br/>
+                        |Diff|: <strong>15132.57</strong> (needs ε ≥ 15,133)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">5</span></td>
+                            <td><span class="badge badge-oracle">14</span></td>
+                            <td><span class="badge badge-oracle">19</span></td>
+                            <td><span class="badge badge-runtime">77.11s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>6,000</strong></td>
+                            <td><span class="badge badge-homogeneous">13,479</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'GDP': '1', 'HoursComputer': '2'}</strong><br/>
+                        Size: 7991<br/>
+                        Pop ATE: 15003.91 | Sub ATE: 1525.70<br/>
+                        |Diff|: <strong>13478.21</strong> (needs ε ≥ 13,479)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">5</span></td>
+                            <td><span class="badge badge-oracle">14</span></td>
+                            <td><span class="badge badge-oracle">19</span></td>
+                            <td><span class="badge badge-runtime">25.36s</span></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                </div>
+            </div>
+
+            <div class="rule-group">
+                <div class="rule-header">
+                    <span class="emoji">📌</span> Rule 6: {'RaceEthnicity': 'White or of European descent'} → {'DevType': 'Engineering manager'}
+                </div>
+                <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Delta (δ)</th>
+                            <th>Smallest ε*<br/>(Achieves Homogeneity)</th>
+                            <th>Violating Subgroup<br/>(Reason for Boundary)</th>
+                            <th>Phase 1<br/>(Bracketing)</th>
+                            <th>Phase 2<br/>(Binary Search)</th>
+                            <th>Total<br/>Oracle Calls</th>
+                            <th>Runtime</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td><strong>2,000</strong></td>
+                            <td><span class="badge badge-homogeneous">12,196</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'SexualOrientation': '1', 'GDP': '1'}</strong><br/>
+                        Size: 13543<br/>
+                        Pop ATE: 31731.57 | Sub ATE: 19535.76<br/>
+                        |Diff|: <strong>12195.81</strong> (needs ε ≥ 12,196)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">5</span></td>
+                            <td><span class="badge badge-oracle">14</span></td>
+                            <td><span class="badge badge-oracle">19</span></td>
+                            <td><span class="badge badge-runtime">168.73s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>4,000</strong></td>
+                            <td><span class="badge badge-homogeneous">3,762</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'HDI': '1', 'Hobby': '1'}</strong><br/>
+                        Size: 20675<br/>
+                        Pop ATE: 31731.57 | Sub ATE: 35493.22<br/>
+                        |Diff|: <strong>3761.65</strong> (needs ε ≥ 3,762)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">3</span></td>
+                            <td><span class="badge badge-oracle">12</span></td>
+                            <td><span class="badge badge-oracle">15</span></td>
+                            <td><span class="badge badge-runtime">36.21s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>6,000</strong></td>
+                            <td><span class="badge badge-homogeneous">0</span></td>
+                            <td><span style="color: #999;">No violation found</span></td>
+                            <td><span class="badge badge-oracle">1</span></td>
+                            <td><span class="badge badge-oracle">10</span></td>
+                            <td><span class="badge badge-oracle">11</span></td>
+                            <td><span class="badge badge-runtime">12.02s</span></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                </div>
+            </div>
+
+            <div class="rule-group">
+                <div class="rule-header">
+                    <span class="emoji">📌</span> Rule 7: {'Student': 'No'} → {'Exercise': '3 - 4 times per week'}
+                </div>
+                <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Delta (δ)</th>
+                            <th>Smallest ε*<br/>(Achieves Homogeneity)</th>
+                            <th>Violating Subgroup<br/>(Reason for Boundary)</th>
+                            <th>Phase 1<br/>(Bracketing)</th>
+                            <th>Phase 2<br/>(Binary Search)</th>
+                            <th>Total<br/>Oracle Calls</th>
+                            <th>Runtime</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td><strong>2,000</strong></td>
+                            <td><span class="badge badge-homogeneous">15,162</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'GDP': '1', 'UndergradMajor': '2', 'Continent': '...</strong><br/>
+                        Size: 2439<br/>
+                        Pop ATE: 9463.58 | Sub ATE: -5697.49<br/>
+                        |Diff|: <strong>15161.08</strong> (needs ε ≥ 15,162)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">5</span></td>
+                            <td><span class="badge badge-oracle">14</span></td>
+                            <td><span class="badge badge-oracle">19</span></td>
+                            <td><span class="badge badge-runtime">678.09s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>4,000</strong></td>
+                            <td><span class="badge badge-homogeneous">11,878</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'GDP': '1', 'HoursComputer': '2', 'SexualOrientat...</strong><br/>
+                        Size: 4087<br/>
+                        Pop ATE: 9463.58 | Sub ATE: -2414.13<br/>
+                        |Diff|: <strong>11877.71</strong> (needs ε ≥ 11,878)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">5</span></td>
+                            <td><span class="badge badge-oracle">14</span></td>
+                            <td><span class="badge badge-oracle">19</span></td>
+                            <td><span class="badge badge-runtime">173.57s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>6,000</strong></td>
+                            <td><span class="badge badge-homogeneous">8,307</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'GDP': '1', 'UndergradMajor': '2', 'Dependents': ...</strong><br/>
+                        Size: 6404<br/>
+                        Pop ATE: 9463.58 | Sub ATE: 1156.65<br/>
+                        |Diff|: <strong>8306.94</strong> (needs ε ≥ 8,307)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">5</span></td>
+                            <td><span class="badge badge-oracle">14</span></td>
+                            <td><span class="badge badge-oracle">19</span></td>
+                            <td><span class="badge badge-runtime">83.44s</span></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                </div>
+            </div>
+
+            <div class="rule-group">
+                <div class="rule-header">
+                    <span class="emoji">📌</span> Rule 8: {'SexualOrientation': 'Straight or heterosexual'} → {'Exercise': '3 - 4 times per week'}
+                </div>
+                <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Delta (δ)</th>
+                            <th>Smallest ε*<br/>(Achieves Homogeneity)</th>
+                            <th>Violating Subgroup<br/>(Reason for Boundary)</th>
+                            <th>Phase 1<br/>(Bracketing)</th>
+                            <th>Phase 2<br/>(Binary Search)</th>
+                            <th>Total<br/>Oracle Calls</th>
+                            <th>Runtime</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td><strong>2,000</strong></td>
+                            <td><span class="badge badge-homogeneous">16,196</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'UndergradMajor': '2', 'Dependents': '2', 'Contin...</strong><br/>
+                        Size: 2650<br/>
+                        Pop ATE: 9817.71 | Sub ATE: -6377.82<br/>
+                        |Diff|: <strong>16195.53</strong> (needs ε ≥ 16,196)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">6</span></td>
+                            <td><span class="badge badge-oracle">15</span></td>
+                            <td><span class="badge badge-oracle">21</span></td>
+                            <td><span class="badge badge-runtime">1084.02s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>4,000</strong></td>
+                            <td><span class="badge badge-homogeneous">11,904</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'GDP': '1', 'HoursComputer': '2', 'Gender': '1', ...</strong><br/>
+                        Size: 4087<br/>
+                        Pop ATE: 9817.71 | Sub ATE: -2085.73<br/>
+                        |Diff|: <strong>11903.44</strong> (needs ε ≥ 11,904)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">5</span></td>
+                            <td><span class="badge badge-oracle">14</span></td>
+                            <td><span class="badge badge-oracle">19</span></td>
+                            <td><span class="badge badge-runtime">175.43s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>6,000</strong></td>
+                            <td><span class="badge badge-homogeneous">8,840</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'GDP': '3', 'Hobby': '1'}</strong><br/>
+                        Size: 6182<br/>
+                        Pop ATE: 9817.71 | Sub ATE: 978.00<br/>
+                        |Diff|: <strong>8839.71</strong> (needs ε ≥ 8,840)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">5</span></td>
+                            <td><span class="badge badge-oracle">14</span></td>
+                            <td><span class="badge badge-oracle">19</span></td>
+                            <td><span class="badge badge-runtime">80.76s</span></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                </div>
+            </div>
+
+            <div class="rule-group">
+                <div class="rule-header">
+                    <span class="emoji">📌</span> Rule 9: {'Dependents': 'No'} → {'HoursComputer': '5 - 8 hours'}
+                </div>
+                <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Delta (δ)</th>
+                            <th>Smallest ε*<br/>(Achieves Homogeneity)</th>
+                            <th>Violating Subgroup<br/>(Reason for Boundary)</th>
+                            <th>Phase 1<br/>(Bracketing)</th>
+                            <th>Phase 2<br/>(Binary Search)</th>
+                            <th>Total<br/>Oracle Calls</th>
+                            <th>Runtime</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td><strong>2,000</strong></td>
+                            <td><span class="badge badge-homogeneous">26,130</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'GINI': '1', 'Continent': '1', 'SexualOrientation...</strong><br/>
+                        Size: 2343<br/>
+                        Pop ATE: 4629.56 | Sub ATE: -21499.85<br/>
+                        |Diff|: <strong>26129.41</strong> (needs ε ≥ 26,130)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">6</span></td>
+                            <td><span class="badge badge-oracle">15</span></td>
+                            <td><span class="badge badge-oracle">21</span></td>
+                            <td><span class="badge badge-runtime">553.24s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>4,000</strong></td>
+                            <td><span class="badge badge-homogeneous">13,997</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'FormalEducation': '4', 'Gender': '1', 'HDI': '1'...</strong><br/>
+                        Size: 4184<br/>
+                        Pop ATE: 4629.56 | Sub ATE: -9367.36<br/>
+                        |Diff|: <strong>13996.92</strong> (needs ε ≥ 13,997)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">5</span></td>
+                            <td><span class="badge badge-oracle">14</span></td>
+                            <td><span class="badge badge-oracle">19</span></td>
+                            <td><span class="badge badge-runtime">102.10s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>6,000</strong></td>
+                            <td><span class="badge badge-homogeneous">9,613</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'SexualOrientation': '1', 'RaceEthnicity': '1', '...</strong><br/>
+                        Size: 6972<br/>
+                        Pop ATE: 4629.56 | Sub ATE: -4982.91<br/>
+                        |Diff|: <strong>9612.47</strong> (needs ε ≥ 9,613)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">5</span></td>
+                            <td><span class="badge badge-oracle">14</span></td>
+                            <td><span class="badge badge-oracle">19</span></td>
+                            <td><span class="badge badge-runtime">44.70s</span></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                </div>
+            </div>
+
+            <div class="rule-group">
+                <div class="rule-header">
+                    <span class="emoji">📌</span> Rule 10: {'Gender': 'Male'} → {'UndergradMajor': 'A humanities discipline (ex. literature, history, philosophy)'}
+                </div>
+                <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Delta (δ)</th>
+                            <th>Smallest ε*<br/>(Achieves Homogeneity)</th>
+                            <th>Violating Subgroup<br/>(Reason for Boundary)</th>
+                            <th>Phase 1<br/>(Bracketing)</th>
+                            <th>Phase 2<br/>(Binary Search)</th>
+                            <th>Total<br/>Oracle Calls</th>
+                            <th>Runtime</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td><strong>2,000</strong></td>
+                            <td><span class="badge badge-homogeneous">16,761</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'RaceEthnicity': '1', 'FormalEducation': '4', 'HD...</strong><br/>
+                        Size: 4311<br/>
+                        Pop ATE: 3043.23 | Sub ATE: -13717.09<br/>
+                        |Diff|: <strong>16760.32</strong> (needs ε ≥ 16,761)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">6</span></td>
+                            <td><span class="badge badge-oracle">15</span></td>
+                            <td><span class="badge badge-oracle">21</span></td>
+                            <td><span class="badge badge-runtime">517.71s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>4,000</strong></td>
+                            <td><span class="badge badge-homogeneous">8,277</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'GDP': '1', 'HDI': '1', 'SexualOrientation': '1'}</strong><br/>
+                        Size: 14972<br/>
+                        Pop ATE: 3043.23 | Sub ATE: -5233.16<br/>
+                        |Diff|: <strong>8276.39</strong> (needs ε ≥ 8,277)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">5</span></td>
+                            <td><span class="badge badge-oracle">14</span></td>
+                            <td><span class="badge badge-oracle">19</span></td>
+                            <td><span class="badge badge-runtime">89.81s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>6,000</strong></td>
+                            <td><span class="badge badge-homogeneous">6,189</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Student': '1', 'GINI': '2', 'Hobby': '1'}</strong><br/>
+                        Size: 12836<br/>
+                        Pop ATE: 3043.23 | Sub ATE: -3144.82<br/>
+                        |Diff|: <strong>6188.05</strong> (needs ε ≥ 6,189)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">4</span></td>
+                            <td><span class="badge badge-oracle">13</span></td>
+                            <td><span class="badge badge-oracle">17</span></td>
+                            <td><span class="badge badge-runtime">32.65s</span></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                </div>
+            </div>
+
+            <h2><span class="emoji">🎯</span> Key Insights</h2>
+            <ul style="line-height: 2; font-size: 1.05em;">
+                <li><span class="emoji">⚡</span> Binary search is <span class="highlight">highly efficient</span>: avg 18.8 oracle calls</li>
+                <li><span class="emoji">🔍</span> Binary search finds the smallest ε* with log₂(n) oracle calls (plus one upper-bound check)</li>
+                <li><span class="emoji">✅</span> Algorithm scales well across different delta values</li>
+            </ul>
+        </div>
+        
+        <footer>
+            <p><span class="emoji">🕐</span> Generated on 2026-02-08 01:21:22</p>
+            <p>Algorithm: Binary Search with FPGrowth Oracle | Dataset: Stack Overflow</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,1285 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Smallest Epsilon - Benchmark Results</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+        .subtitle { font-size: 1.2em; opacity: 0.9; }
+        .content { padding: 40px; }
+        .table-scroll {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 15px 0;
+        }
+        .table-scroll table {
+            width: max-content;
+            min-width: 100%;
+            margin: 0;
+        }
+        
+        .insight-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .insight-box h3 { margin-bottom: 15px; font-size: 1.3em; }
+        .insight-box .formula {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-family: 'Courier New', monospace;
+            margin-top: 10px;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .summary-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        .summary-card h3 {
+            font-size: 0.85em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .summary-card .value {
+            font-size: 2.2em;
+            font-weight: bold;
+        }
+        
+        h2 {
+            color: #f5576c;
+            border-bottom: 3px solid #f5576c;
+            padding-bottom: 10px;
+            margin: 40px 0 20px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: visible;
+            font-size: 0.9em;
+        }
+        thead {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        th {
+            padding: 12px 10px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8em;
+            letter-spacing: 0.5px;
+        }
+        tbody tr { transition: all 0.2s; }
+        tbody tr:nth-child(even) { background: #f8f9fa; }
+        tbody tr:hover {
+            background: #ffe0f0;
+            transform: scale(1.005);
+        }
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        .badge-homogeneous {
+            background: #d4edda;
+            color: #155724;
+        }
+        .badge-heterogeneous {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .badge-runtime {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        .badge-oracle {
+            background: #e2e3e5;
+            color: #383d41;
+            font-weight: bold;
+        }
+        
+        .highlight {
+            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        .rule-group {
+            margin: 30px 0;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .rule-header {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            font-weight: bold;
+            color: #495057;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+        
+        .emoji { font-size: 1.2em; }
+        
+        .glossary {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+        .glossary h3 {
+            color: #495057;
+            margin-bottom: 20px;
+        }
+        .glossary-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .glossary-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e9ecef;
+            line-height: 1.6;
+        }
+        .glossary-table tr:last-child td {
+            border-bottom: none;
+        }
+        .glossary-table .metric-name {
+            font-weight: bold;
+            color: #495057;
+            width: 30%;
+            background: #f8f9fa;
+        }
+        .glossary-table .metric-desc {
+            color: #6c757d;
+        }
+        .glossary-table .formula-code {
+            background: #e9ecef;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #495057;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><span class="emoji">🎯</span> Find Smallest Epsilon - Benchmark Results</h1>
+            <p class="subtitle">Two-Phase Search Algorithm (Exponential + Binary)</p>
+            <p class="subtitle" style="font-size: 0.9em; margin-top: 10px;">
+                40 Experiments | 10 Rules | 12 Delta Values | Runtime: 54.62 minutes
+            </p>
+        </header>
+        
+        <div class="content">
+            <div class="insight-box">
+                <h3><span class="emoji">💡</span> Algorithm Overview</h3>
+                <p><strong>Phase 1: Exponential Search</strong> - Quickly find upper bound by doubling epsilon</p>
+                <p><strong>Phase 2: Binary Search</strong> - Refine to find exact smallest epsilon</p>
+                <div class="formula">
+                    <strong>largest ε (heterogeneous)</strong> = <strong>smallest ε (homogeneous)</strong> - 1
+                </div>
+                <p style="margin-top: 10px;">
+                    Above ε*, the rule is homogeneous. At ε* - 1, violations exist.
+                </p>
+            </div>
+            
+            <div class="glossary">
+                <h3><span class="emoji">📖</span> Metrics Glossary - How Each Column is Calculated</h3>
+                <div class="table-scroll">
+                <table class="glossary-table">
+                    <tr>
+                        <td class="metric-name">Delta (δ)</td>
+                        <td class="metric-desc">
+                            <strong>Fixed Input Parameter.</strong> The minimum subgroup size threshold. 
+                            All candidate subgroups must contain at least δ individuals to be evaluated.
+                            <br><span class="formula-code">Input: User-specified value</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="metric-name">Smallest ε (Homogeneous)</td>
+                        <td class="metric-desc">
+                            <strong>Algorithm Output.</strong> The smallest epsilon threshold where the rule becomes homogeneous 
+                            (no subgroups violate the threshold). This is the primary result we're searching for.
+                            <br><span class="formula-code">Found via: Exponential search + Binary search</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="metric-name">Largest ε (Heterogeneous)</td>
+                        <td class="metric-desc">
+                            <strong>Derived Metric.</strong> The largest epsilon value where violations still exist. 
+                            Due to monotonicity, this is exactly one less than the smallest homogeneous epsilon.
+                            <br><span class="formula-code">Calculation: smallest_ε_homogeneous - 1</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="metric-name">Oracle Calls</td>
+                        <td class="metric-desc">
+                            <strong>Efficiency Metric.</strong> Total number of times we invoked the homogeneity oracle 
+                            (FPGrowth algorithm) to check if a rule is homogeneous at a given epsilon. 
+                            Lower is better; indicates search efficiency.
+                            <br><span class="formula-code">Count: Total calls to FPGrowth oracle during binary search (plus one upper-bound check)</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="metric-name">Runtime (seconds)</td>
+                        <td class="metric-desc">
+                            <strong>Performance Metric.</strong> Wall-clock time (in seconds) to complete the entire 
+                            binary search for this specific rule and delta combination (ε ∈ [0, ε_max]).
+                            <br><span class="formula-code">Measurement: end_time - start_time</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="metric-name">Dataset Size</td>
+                        <td class="metric-desc">
+                            <strong>Context Information.</strong> The total number of rows (individuals) in the dataset 
+                            for this particular rule. Larger datasets may require more computation per oracle call.
+                            <br><span class="formula-code">Value: len(dataframe)</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="metric-name">Rule ID</td>
+                        <td class="metric-desc">
+                            <strong>Identifier.</strong> Unique numerical identifier for each treatment-condition pair being tested.
+                            <br><span class="formula-code">Value: 1, 2, 3, ...</span>
+                        </td>
+                    </tr>
+                </table>
+                </div>
+            </div>
+            
+            <h2><span class="emoji">📊</span> Performance Summary</h2>
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <h3>Total Experiments</h3>
+                    <div class="value">40</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Avg Runtime</h3>
+                    <div class="value">81.93s</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Avg Oracle Calls</h3>
+                    <div class="value">18.2</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Min Oracle Calls</h3>
+                    <div class="value">15</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Max Oracle Calls</h3>
+                    <div class="value">21</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Total Runtime</h3>
+                    <div class="value">54.6m</div>
+                </div>
+            </div>
+            
+            <h2><span class="emoji">📋</span> Detailed Results</h2>
+
+            <div class="rule-group">
+                <div class="rule-header">
+                    <span class="emoji">📌</span> Rule 1: {'With a disability': 2} → {'Insurance through a current or former employer or union': 1}
+                </div>
+                <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Delta (δ)</th>
+                            <th>Smallest ε*<br/>(Achieves Homogeneity)</th>
+                            <th>Violating Subgroup<br/>(Reason for Boundary)</th>
+                            <th>Phase 1<br/>(Bracketing)</th>
+                            <th>Phase 2<br/>(Binary Search)</th>
+                            <th>Total<br/>Oracle Calls</th>
+                            <th>Runtime</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td><strong>49,934</strong></td>
+                            <td><span class="badge badge-homogeneous">20,540</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Medicare_ for people 65 and older_ or people wit...</strong><br/>
+                        Size: 65353<br/>
+                        Pop ATE: 15278.83 | Sub ATE: 35818.04<br/>
+                        |Diff|: <strong>20539.21</strong> (needs ε ≥ 20,540)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">6</span></td>
+                            <td><span class="badge badge-oracle">15</span></td>
+                            <td><span class="badge badge-oracle">21</span></td>
+                            <td><span class="badge badge-runtime">51.30s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>99,869</strong></td>
+                            <td><span class="badge badge-homogeneous">14,305</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Sex': '2', 'Public health coverage': '1', 'Medic...</strong><br/>
+                        Size: 100597<br/>
+                        Pop ATE: 15278.83 | Sub ATE: 974.59<br/>
+                        |Diff|: <strong>14304.24</strong> (needs ε ≥ 14,305)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">5</span></td>
+                            <td><span class="badge badge-oracle">14</span></td>
+                            <td><span class="badge badge-oracle">19</span></td>
+                            <td><span class="badge badge-runtime">39.98s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>149,804</strong></td>
+                            <td><span class="badge badge-homogeneous">13,899</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Sex': '2', 'Public health coverage': '1'}</strong><br/>
+                        Size: 161314<br/>
+                        Pop ATE: 15278.83 | Sub ATE: 1380.34<br/>
+                        |Diff|: <strong>13898.49</strong> (needs ε ≥ 13,899)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">5</span></td>
+                            <td><span class="badge badge-oracle">14</span></td>
+                            <td><span class="badge badge-oracle">19</span></td>
+                            <td><span class="badge badge-runtime">38.19s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>199,739</strong></td>
+                            <td><span class="badge badge-homogeneous">12,428</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Public health coverage': '1'}</strong><br/>
+                        Size: 299011<br/>
+                        Pop ATE: 15278.83 | Sub ATE: 2851.21<br/>
+                        |Diff|: <strong>12427.62</strong> (needs ε ≥ 12,428)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">5</span></td>
+                            <td><span class="badge badge-oracle">14</span></td>
+                            <td><span class="badge badge-oracle">19</span></td>
+                            <td><span class="badge badge-runtime">38.14s</span></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                </div>
+            </div>
+
+            <div class="rule-group">
+                <div class="rule-header">
+                    <span class="emoji">📌</span> Rule 2: {'With a disability': 2} → {'Public health coverage': 2}
+                </div>
+                <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Delta (δ)</th>
+                            <th>Smallest ε*<br/>(Achieves Homogeneity)</th>
+                            <th>Violating Subgroup<br/>(Reason for Boundary)</th>
+                            <th>Phase 1<br/>(Bracketing)</th>
+                            <th>Phase 2<br/>(Binary Search)</th>
+                            <th>Total<br/>Oracle Calls</th>
+                            <th>Runtime</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td><strong>49,934</strong></td>
+                            <td><span class="badge badge-homogeneous">12,928</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Educational attainment': '22.0'}</strong><br/>
+                        Size: 88936<br/>
+                        Pop ATE: 7259.48 | Sub ATE: 20186.74<br/>
+                        |Diff|: <strong>12927.27</strong> (needs ε ≥ 12,928)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">5</span></td>
+                            <td><span class="badge badge-oracle">14</span></td>
+                            <td><span class="badge badge-oracle">19</span></td>
+                            <td><span class="badge badge-runtime">46.57s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>99,869</strong></td>
+                            <td><span class="badge badge-homogeneous">5,582</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Sex': '2', 'Private health insurance coverage': ...</strong><br/>
+                        Size: 138038<br/>
+                        Pop ATE: 7259.48 | Sub ATE: 1678.11<br/>
+                        |Diff|: <strong>5581.36</strong> (needs ε ≥ 5,582)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">4</span></td>
+                            <td><span class="badge badge-oracle">13</span></td>
+                            <td><span class="badge badge-oracle">17</span></td>
+                            <td><span class="badge badge-runtime">36.07s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>149,804</strong></td>
+                            <td><span class="badge badge-homogeneous">5,000</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Educational attainment': '21.0'}</strong><br/>
+                        Size: 199041<br/>
+                        Pop ATE: 7259.48 | Sub ATE: 12258.68<br/>
+                        |Diff|: <strong>4999.21</strong> (needs ε ≥ 5,000)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">4</span></td>
+                            <td><span class="badge badge-oracle">12</span></td>
+                            <td><span class="badge badge-oracle">16</span></td>
+                            <td><span class="badge badge-runtime">30.85s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>199,739</strong></td>
+                            <td><span class="badge badge-homogeneous">4,923</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Sex': '2', 'Insurance through a current or forme...</strong><br/>
+                        Size: 211226<br/>
+                        Pop ATE: 7259.48 | Sub ATE: 2336.86<br/>
+                        |Diff|: <strong>4922.62</strong> (needs ε ≥ 4,923)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">4</span></td>
+                            <td><span class="badge badge-oracle">13</span></td>
+                            <td><span class="badge badge-oracle">17</span></td>
+                            <td><span class="badge badge-runtime">31.59s</span></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                </div>
+            </div>
+
+            <div class="rule-group">
+                <div class="rule-header">
+                    <span class="emoji">📌</span> Rule 3: {'With a disability': 2} → {'Private health insurance coverage': 2}
+                </div>
+                <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Delta (δ)</th>
+                            <th>Smallest ε*<br/>(Achieves Homogeneity)</th>
+                            <th>Violating Subgroup<br/>(Reason for Boundary)</th>
+                            <th>Phase 1<br/>(Bracketing)</th>
+                            <th>Phase 2<br/>(Binary Search)</th>
+                            <th>Total<br/>Oracle Calls</th>
+                            <th>Runtime</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td><strong>49,934</strong></td>
+                            <td><span class="badge badge-homogeneous">10,511</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Educational attainment': '21.0', 'Public health ...</strong><br/>
+                        Size: 72314<br/>
+                        Pop ATE: 1302.43 | Sub ATE: -9208.38<br/>
+                        |Diff|: <strong>10510.81</strong> (needs ε ≥ 10,511)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">5</span></td>
+                            <td><span class="badge badge-oracle">14</span></td>
+                            <td><span class="badge badge-oracle">19</span></td>
+                            <td><span class="badge badge-runtime">45.48s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>99,869</strong></td>
+                            <td><span class="badge badge-homogeneous">6,260</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Educational attainment': '21.0', 'Medicare_ for ...</strong><br/>
+                        Size: 156713<br/>
+                        Pop ATE: 1302.43 | Sub ATE: -4957.29<br/>
+                        |Diff|: <strong>6259.72</strong> (needs ε ≥ 6,260)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">4</span></td>
+                            <td><span class="badge badge-oracle">13</span></td>
+                            <td><span class="badge badge-oracle">17</span></td>
+                            <td><span class="badge badge-runtime">36.03s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>149,804</strong></td>
+                            <td><span class="badge badge-homogeneous">6,260</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Educational attainment': '21.0', 'Public health ...</strong><br/>
+                        Size: 156713<br/>
+                        Pop ATE: 1302.43 | Sub ATE: -4957.29<br/>
+                        |Diff|: <strong>6259.72</strong> (needs ε ≥ 6,260)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">4</span></td>
+                            <td><span class="badge badge-oracle">13</span></td>
+                            <td><span class="badge badge-oracle">17</span></td>
+                            <td><span class="badge badge-runtime">33.59s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>199,739</strong></td>
+                            <td><span class="badge badge-homogeneous">2,607</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Medicare_ for people 65 and older_ or people wit...</strong><br/>
+                        Size: 402760<br/>
+                        Pop ATE: 1302.43 | Sub ATE: -1303.87<br/>
+                        |Diff|: <strong>2606.31</strong> (needs ε ≥ 2,607)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">3</span></td>
+                            <td><span class="badge badge-oracle">12</span></td>
+                            <td><span class="badge badge-oracle">15</span></td>
+                            <td><span class="badge badge-runtime">27.81s</span></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                </div>
+            </div>
+
+            <div class="rule-group">
+                <div class="rule-header">
+                    <span class="emoji">📌</span> Rule 4: {'With a disability': 2} → {'Educational attainment': 20}
+                </div>
+                <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Delta (δ)</th>
+                            <th>Smallest ε*<br/>(Achieves Homogeneity)</th>
+                            <th>Violating Subgroup<br/>(Reason for Boundary)</th>
+                            <th>Phase 1<br/>(Bracketing)</th>
+                            <th>Phase 2<br/>(Binary Search)</th>
+                            <th>Total<br/>Oracle Calls</th>
+                            <th>Runtime</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td><strong>49,934</strong></td>
+                            <td><span class="badge badge-homogeneous">4,183</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Private health insurance coverage': '1', 'Public...</strong><br/>
+                        Size: 251509<br/>
+                        Pop ATE: 2602.12 | Sub ATE: -1580.31<br/>
+                        |Diff|: <strong>4182.43</strong> (needs ε ≥ 4,183)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">4</span></td>
+                            <td><span class="badge badge-oracle">13</span></td>
+                            <td><span class="badge badge-oracle">17</span></td>
+                            <td><span class="badge badge-runtime">44.60s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>99,869</strong></td>
+                            <td><span class="badge badge-homogeneous">4,183</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Private health insurance coverage': '1', 'Public...</strong><br/>
+                        Size: 251509<br/>
+                        Pop ATE: 2602.12 | Sub ATE: -1580.31<br/>
+                        |Diff|: <strong>4182.43</strong> (needs ε ≥ 4,183)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">4</span></td>
+                            <td><span class="badge badge-oracle">13</span></td>
+                            <td><span class="badge badge-oracle">17</span></td>
+                            <td><span class="badge badge-runtime">41.89s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>149,804</strong></td>
+                            <td><span class="badge badge-homogeneous">4,183</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Medicare_ for people 65 and older_ or people wit...</strong><br/>
+                        Size: 251509<br/>
+                        Pop ATE: 2602.12 | Sub ATE: -1580.31<br/>
+                        |Diff|: <strong>4182.43</strong> (needs ε ≥ 4,183)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">4</span></td>
+                            <td><span class="badge badge-oracle">13</span></td>
+                            <td><span class="badge badge-oracle">17</span></td>
+                            <td><span class="badge badge-runtime">40.05s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>199,739</strong></td>
+                            <td><span class="badge badge-homogeneous">4,183</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Private health insurance coverage': '1', 'Public...</strong><br/>
+                        Size: 251509<br/>
+                        Pop ATE: 2602.12 | Sub ATE: -1580.31<br/>
+                        |Diff|: <strong>4182.43</strong> (needs ε ≥ 4,183)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">4</span></td>
+                            <td><span class="badge badge-oracle">13</span></td>
+                            <td><span class="badge badge-oracle">17</span></td>
+                            <td><span class="badge badge-runtime">37.98s</span></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                </div>
+            </div>
+
+            <div class="rule-group">
+                <div class="rule-header">
+                    <span class="emoji">📌</span> Rule 5: {'With a disability': 2} → {'Educational attainment': 21}
+                </div>
+                <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Delta (δ)</th>
+                            <th>Smallest ε*<br/>(Achieves Homogeneity)</th>
+                            <th>Violating Subgroup<br/>(Reason for Boundary)</th>
+                            <th>Phase 1<br/>(Bracketing)</th>
+                            <th>Phase 2<br/>(Binary Search)</th>
+                            <th>Total<br/>Oracle Calls</th>
+                            <th>Runtime</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td><strong>49,934</strong></td>
+                            <td><span class="badge badge-homogeneous">11,997</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Medicare_ for people 65 and older_ or people wit...</strong><br/>
+                        Size: 251509<br/>
+                        Pop ATE: 10610.27 | Sub ATE: 22606.90<br/>
+                        |Diff|: <strong>11996.63</strong> (needs ε ≥ 11,997)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">5</span></td>
+                            <td><span class="badge badge-oracle">14</span></td>
+                            <td><span class="badge badge-oracle">19</span></td>
+                            <td><span class="badge badge-runtime">38.93s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>99,869</strong></td>
+                            <td><span class="badge badge-homogeneous">11,997</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Private health insurance coverage': '1', 'Public...</strong><br/>
+                        Size: 251509<br/>
+                        Pop ATE: 10610.27 | Sub ATE: 22606.90<br/>
+                        |Diff|: <strong>11996.63</strong> (needs ε ≥ 11,997)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">5</span></td>
+                            <td><span class="badge badge-oracle">14</span></td>
+                            <td><span class="badge badge-oracle">19</span></td>
+                            <td><span class="badge badge-runtime">37.52s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>149,804</strong></td>
+                            <td><span class="badge badge-homogeneous">11,997</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Private health insurance coverage': '1', 'Public...</strong><br/>
+                        Size: 251509<br/>
+                        Pop ATE: 10610.27 | Sub ATE: 22606.90<br/>
+                        |Diff|: <strong>11996.63</strong> (needs ε ≥ 11,997)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">5</span></td>
+                            <td><span class="badge badge-oracle">14</span></td>
+                            <td><span class="badge badge-oracle">19</span></td>
+                            <td><span class="badge badge-runtime">35.95s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>199,739</strong></td>
+                            <td><span class="badge badge-homogeneous">11,997</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Public health coverage': '2', 'Sex': '1', 'Insur...</strong><br/>
+                        Size: 251509<br/>
+                        Pop ATE: 10610.27 | Sub ATE: 22606.90<br/>
+                        |Diff|: <strong>11996.63</strong> (needs ε ≥ 11,997)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">5</span></td>
+                            <td><span class="badge badge-oracle">14</span></td>
+                            <td><span class="badge badge-oracle">19</span></td>
+                            <td><span class="badge badge-runtime">35.44s</span></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                </div>
+            </div>
+
+            <div class="rule-group">
+                <div class="rule-header">
+                    <span class="emoji">📌</span> Rule 6: {'With a disability': 2} → {'Educational attainment': 22}
+                </div>
+                <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Delta (δ)</th>
+                            <th>Smallest ε*<br/>(Achieves Homogeneity)</th>
+                            <th>Violating Subgroup<br/>(Reason for Boundary)</th>
+                            <th>Phase 1<br/>(Bracketing)</th>
+                            <th>Phase 2<br/>(Binary Search)</th>
+                            <th>Total<br/>Oracle Calls</th>
+                            <th>Runtime</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td><strong>49,934</strong></td>
+                            <td><span class="badge badge-homogeneous">17,220</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Medicare_ for people 65 and older_ or people wit...</strong><br/>
+                        Size: 259796<br/>
+                        Pop ATE: 14823.52 | Sub ATE: 32042.68<br/>
+                        |Diff|: <strong>17219.15</strong> (needs ε ≥ 17,220)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">6</span></td>
+                            <td><span class="badge badge-oracle">15</span></td>
+                            <td><span class="badge badge-oracle">21</span></td>
+                            <td><span class="badge badge-runtime">55.69s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>99,869</strong></td>
+                            <td><span class="badge badge-homogeneous">17,220</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Medicare_ for people 65 and older_ or people wit...</strong><br/>
+                        Size: 259796<br/>
+                        Pop ATE: 14823.52 | Sub ATE: 32042.68<br/>
+                        |Diff|: <strong>17219.15</strong> (needs ε ≥ 17,220)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">6</span></td>
+                            <td><span class="badge badge-oracle">15</span></td>
+                            <td><span class="badge badge-oracle">21</span></td>
+                            <td><span class="badge badge-runtime">52.73s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>149,804</strong></td>
+                            <td><span class="badge badge-homogeneous">17,220</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Medicare_ for people 65 and older_ or people wit...</strong><br/>
+                        Size: 259796<br/>
+                        Pop ATE: 14823.52 | Sub ATE: 32042.68<br/>
+                        |Diff|: <strong>17219.15</strong> (needs ε ≥ 17,220)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">6</span></td>
+                            <td><span class="badge badge-oracle">15</span></td>
+                            <td><span class="badge badge-oracle">21</span></td>
+                            <td><span class="badge badge-runtime">50.00s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>199,739</strong></td>
+                            <td><span class="badge badge-homogeneous">17,220</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Medicare_ for people 65 and older_ or people wit...</strong><br/>
+                        Size: 259796<br/>
+                        Pop ATE: 14823.52 | Sub ATE: 32042.68<br/>
+                        |Diff|: <strong>17219.15</strong> (needs ε ≥ 17,220)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">6</span></td>
+                            <td><span class="badge badge-oracle">15</span></td>
+                            <td><span class="badge badge-oracle">21</span></td>
+                            <td><span class="badge badge-runtime">47.59s</span></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                </div>
+            </div>
+
+            <div class="rule-group">
+                <div class="rule-header">
+                    <span class="emoji">📌</span> Rule 7: {'Sex': 2} → {'Educational attainment': 20}
+                </div>
+                <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Delta (δ)</th>
+                            <th>Smallest ε*<br/>(Achieves Homogeneity)</th>
+                            <th>Violating Subgroup<br/>(Reason for Boundary)</th>
+                            <th>Phase 1<br/>(Bracketing)</th>
+                            <th>Phase 2<br/>(Binary Search)</th>
+                            <th>Total<br/>Oracle Calls</th>
+                            <th>Runtime</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td><strong>30,621</strong></td>
+                            <td><span class="badge badge-homogeneous">3,199</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'With a disability': '1', 'Insurance through a cu...</strong><br/>
+                        Size: 35818<br/>
+                        Pop ATE: 3195.92 | Sub ATE: -2.87<br/>
+                        |Diff|: <strong>3198.79</strong> (needs ε ≥ 3,199)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">3</span></td>
+                            <td><span class="badge badge-oracle">12</span></td>
+                            <td><span class="badge badge-oracle">15</span></td>
+                            <td><span class="badge badge-runtime">23.38s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>61,243</strong></td>
+                            <td><span class="badge badge-homogeneous">3,190</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'With a disability': '1', 'Public health coverage...</strong><br/>
+                        Size: 63611<br/>
+                        Pop ATE: 3195.92 | Sub ATE: 6.57<br/>
+                        |Diff|: <strong>3189.36</strong> (needs ε ≥ 3,190)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">3</span></td>
+                            <td><span class="badge badge-oracle">12</span></td>
+                            <td><span class="badge badge-oracle">15</span></td>
+                            <td><span class="badge badge-runtime">23.91s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>91,864</strong></td>
+                            <td><span class="badge badge-homogeneous">3,100</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Insurance through a current or former employer o...</strong><br/>
+                        Size: 118526<br/>
+                        Pop ATE: 3195.92 | Sub ATE: 96.05<br/>
+                        |Diff|: <strong>3099.87</strong> (needs ε ≥ 3,100)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">3</span></td>
+                            <td><span class="badge badge-oracle">12</span></td>
+                            <td><span class="badge badge-oracle">15</span></td>
+                            <td><span class="badge badge-runtime">22.17s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>122,486</strong></td>
+                            <td><span class="badge badge-homogeneous">2,943</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Medicare_ for people 65 and older_ or people wit...</strong><br/>
+                        Size: 164208<br/>
+                        Pop ATE: 3195.92 | Sub ATE: 253.39<br/>
+                        |Diff|: <strong>2942.53</strong> (needs ε ≥ 2,943)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">3</span></td>
+                            <td><span class="badge badge-oracle">12</span></td>
+                            <td><span class="badge badge-oracle">15</span></td>
+                            <td><span class="badge badge-runtime">21.54s</span></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                </div>
+            </div>
+
+            <div class="rule-group">
+                <div class="rule-header">
+                    <span class="emoji">📌</span> Rule 8: {'Sex': 1} → {'Educational attainment': 21}
+                </div>
+                <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Delta (δ)</th>
+                            <th>Smallest ε*<br/>(Achieves Homogeneity)</th>
+                            <th>Violating Subgroup<br/>(Reason for Boundary)</th>
+                            <th>Phase 1<br/>(Bracketing)</th>
+                            <th>Phase 2<br/>(Binary Search)</th>
+                            <th>Total<br/>Oracle Calls</th>
+                            <th>Runtime</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td><strong>28,793</strong></td>
+                            <td><span class="badge badge-homogeneous">12,830</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'With a disability': '1', 'Medicare_ for people 6...</strong><br/>
+                        Size: 51505<br/>
+                        Pop ATE: 12832.16 | Sub ATE: 3.00<br/>
+                        |Diff|: <strong>12829.17</strong> (needs ε ≥ 12,830)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">5</span></td>
+                            <td><span class="badge badge-oracle">14</span></td>
+                            <td><span class="badge badge-oracle">19</span></td>
+                            <td><span class="badge badge-runtime">28.35s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>57,587</strong></td>
+                            <td><span class="badge badge-homogeneous">12,583</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'With a disability': '1', 'Public health coverage...</strong><br/>
+                        Size: 68432<br/>
+                        Pop ATE: 12832.16 | Sub ATE: 249.98<br/>
+                        |Diff|: <strong>12582.19</strong> (needs ε ≥ 12,583)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">5</span></td>
+                            <td><span class="badge badge-oracle">14</span></td>
+                            <td><span class="badge badge-oracle">19</span></td>
+                            <td><span class="badge badge-runtime">27.23s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>86,381</strong></td>
+                            <td><span class="badge badge-homogeneous">12,411</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Insurance through a current or former employer o...</strong><br/>
+                        Size: 92971<br/>
+                        Pop ATE: 12832.16 | Sub ATE: 422.03<br/>
+                        |Diff|: <strong>12410.13</strong> (needs ε ≥ 12,411)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">5</span></td>
+                            <td><span class="badge badge-oracle">14</span></td>
+                            <td><span class="badge badge-oracle">19</span></td>
+                            <td><span class="badge badge-runtime">25.98s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>115,175</strong></td>
+                            <td><span class="badge badge-homogeneous">12,127</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Medicare_ for people 65 and older_ or people wit...</strong><br/>
+                        Size: 134474<br/>
+                        Pop ATE: 12832.16 | Sub ATE: 705.64<br/>
+                        |Diff|: <strong>12126.53</strong> (needs ε ≥ 12,127)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">5</span></td>
+                            <td><span class="badge badge-oracle">14</span></td>
+                            <td><span class="badge badge-oracle">19</span></td>
+                            <td><span class="badge badge-runtime">25.86s</span></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                </div>
+            </div>
+
+            <div class="rule-group">
+                <div class="rule-header">
+                    <span class="emoji">📌</span> Rule 9: {'Sex': 1} → {'Educational attainment': 20}
+                </div>
+                <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Delta (δ)</th>
+                            <th>Smallest ε*<br/>(Achieves Homogeneity)</th>
+                            <th>Violating Subgroup<br/>(Reason for Boundary)</th>
+                            <th>Phase 1<br/>(Bracketing)</th>
+                            <th>Phase 2<br/>(Binary Search)</th>
+                            <th>Total<br/>Oracle Calls</th>
+                            <th>Runtime</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td><strong>28,793</strong></td>
+                            <td><span class="badge badge-homogeneous">4,531</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'With a disability': '2', 'Public health coverage...</strong><br/>
+                        Size: 251509<br/>
+                        Pop ATE: 2950.55 | Sub ATE: -1580.31<br/>
+                        |Diff|: <strong>4530.86</strong> (needs ε ≥ 4,531)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">4</span></td>
+                            <td><span class="badge badge-oracle">13</span></td>
+                            <td><span class="badge badge-oracle">17</span></td>
+                            <td><span class="badge badge-runtime">26.31s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>57,587</strong></td>
+                            <td><span class="badge badge-homogeneous">4,531</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'With a disability': '2', 'Public health coverage...</strong><br/>
+                        Size: 251509<br/>
+                        Pop ATE: 2950.55 | Sub ATE: -1580.31<br/>
+                        |Diff|: <strong>4530.86</strong> (needs ε ≥ 4,531)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">4</span></td>
+                            <td><span class="badge badge-oracle">13</span></td>
+                            <td><span class="badge badge-oracle">17</span></td>
+                            <td><span class="badge badge-runtime">23.84s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>86,381</strong></td>
+                            <td><span class="badge badge-homogeneous">4,531</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'With a disability': '2', 'Public health coverage...</strong><br/>
+                        Size: 251509<br/>
+                        Pop ATE: 2950.55 | Sub ATE: -1580.31<br/>
+                        |Diff|: <strong>4530.86</strong> (needs ε ≥ 4,531)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">4</span></td>
+                            <td><span class="badge badge-oracle">13</span></td>
+                            <td><span class="badge badge-oracle">17</span></td>
+                            <td><span class="badge badge-runtime">22.84s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>115,175</strong></td>
+                            <td><span class="badge badge-homogeneous">4,531</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'With a disability': '2', 'Public health coverage...</strong><br/>
+                        Size: 251509<br/>
+                        Pop ATE: 2950.55 | Sub ATE: -1580.31<br/>
+                        |Diff|: <strong>4530.86</strong> (needs ε ≥ 4,531)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">4</span></td>
+                            <td><span class="badge badge-oracle">13</span></td>
+                            <td><span class="badge badge-oracle">17</span></td>
+                            <td><span class="badge badge-runtime">21.81s</span></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                </div>
+            </div>
+
+            <div class="rule-group">
+                <div class="rule-header">
+                    <span class="emoji">📌</span> Rule 10: {'Sex': 1} → {'Insurance through a current or former employer or union': 1}
+                </div>
+                <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Delta (δ)</th>
+                            <th>Smallest ε*<br/>(Achieves Homogeneity)</th>
+                            <th>Violating Subgroup<br/>(Reason for Boundary)</th>
+                            <th>Phase 1<br/>(Bracketing)</th>
+                            <th>Phase 2<br/>(Binary Search)</th>
+                            <th>Total<br/>Oracle Calls</th>
+                            <th>Runtime</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td><strong>28,793</strong></td>
+                            <td><span class="badge badge-homogeneous">28,352</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'With a disability': '2', 'Medicare_ for people 6...</strong><br/>
+                        Size: 29837<br/>
+                        Pop ATE: 16872.06 | Sub ATE: 45223.24<br/>
+                        |Diff|: <strong>28351.18</strong> (needs ε ≥ 28,352)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">6</span></td>
+                            <td><span class="badge badge-oracle">15</span></td>
+                            <td><span class="badge badge-oracle">21</span></td>
+                            <td><span class="badge badge-runtime">998.66s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>57,587</strong></td>
+                            <td><span class="badge badge-homogeneous">18,925</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Educational attainment': '21.0', 'Private health...</strong><br/>
+                        Size: 67912<br/>
+                        Pop ATE: 16872.06 | Sub ATE: 35796.93<br/>
+                        |Diff|: <strong>18924.87</strong> (needs ε ≥ 18,925)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">6</span></td>
+                            <td><span class="badge badge-oracle">15</span></td>
+                            <td><span class="badge badge-oracle">21</span></td>
+                            <td><span class="badge badge-runtime">23.96s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>86,381</strong></td>
+                            <td><span class="badge badge-homogeneous">14,998</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Medicare_ for people 65 and older_ or people wit...</strong><br/>
+                        Size: 134474<br/>
+                        Pop ATE: 16872.06 | Sub ATE: 1874.55<br/>
+                        |Diff|: <strong>14997.51</strong> (needs ε ≥ 14,998)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">5</span></td>
+                            <td><span class="badge badge-oracle">14</span></td>
+                            <td><span class="badge badge-oracle">19</span></td>
+                            <td><span class="badge badge-runtime">18.70s</span></td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>115,175</strong></td>
+                            <td><span class="badge badge-homogeneous">14,998</span></td>
+                            <td>
+                    <div style="font-size: 0.85em; line-height: 1.4;">
+                        <strong>{'Medicare_ for people 65 and older_ or people wit...</strong><br/>
+                        Size: 134474<br/>
+                        Pop ATE: 16872.06 | Sub ATE: 1874.55<br/>
+                        |Diff|: <strong>14997.51</strong> (needs ε ≥ 14,998)
+                    </div>
+                </td>
+                            <td><span class="badge badge-oracle">5</span></td>
+                            <td><span class="badge badge-oracle">14</span></td>
+                            <td><span class="badge badge-oracle">19</span></td>
+                            <td><span class="badge badge-runtime">968.90s</span></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                </div>
+            </div>
+
+            <h2><span class="emoji">🎯</span> Key Insights</h2>
+            <ul style="line-height: 2; font-size: 1.05em;">
+                <li><span class="emoji">⚡</span> Binary search is <span class="highlight">highly efficient</span>: avg 18.2 oracle calls</li>
+                <li><span class="emoji">🔍</span> Binary search finds the smallest ε* with log₂(n) oracle calls (plus one upper-bound check)</li>
+                <li><span class="emoji">✅</span> Algorithm scales well across different delta values</li>
+            </ul>
+        </div>
+        
+        <footer>
+            <p><span class="emoji">🕐</span> Generated on 2026-02-20 18:46:29</p>
+            <p>Algorithm: Binary Search with FPGrowth Oracle | Dataset: Stack Overflow</p>
+        </footer>
+    </div>
+</body>
+</html>

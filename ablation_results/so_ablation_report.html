@@ -1,0 +1,5128 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Ablation Study Report - so</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+        }
+        .info-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        .graph-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            font-size: 13px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .table-container {
+            max-height: 600px;
+            overflow-y: auto;
+            margin: 20px 0;
+        }
+        .metric {
+            display: inline-block;
+            margin: 10px 20px;
+            padding: 15px;
+            background: #ecf0f1;
+            border-radius: 5px;
+        }
+        .metric-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2980b9;
+        }
+        .metric-label {
+            font-size: 12px;
+            color: #7f8c8d;
+            text-transform: uppercase;
+        }
+    </style>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <h1>🔬 Ablation Study Report: SO</h1>
+    
+    <div class="info-box">
+        <h2>📋 Study Overview</h2>
+        <div class="metric">
+            <div class="metric-label">Dataset</div>
+            <div class="metric-value">so</div>
+        </div>
+        <div class="metric">
+            <div class="metric-label">Algorithms Tested</div>
+            <div class="metric-value">2</div>
+        </div>
+        <div class="metric">
+            <div class="metric-label">Rules Tested</div>
+            <div class="metric-value">7</div>
+        </div>
+        <div class="metric">
+            <div class="metric-label">Total Runs</div>
+            <div class="metric-value">360</div>
+        </div>
+    </div>
+
+    <div class="info-box">
+        <h3>Experiment Setup:</h3>
+        <ul>
+            <li><strong>Ground Truth:</strong> FPGrowth (100% accurate but slower)</li>
+            <li><strong>Testing:</strong> RW_Direct (faster but need to verify correctness)</li>
+            <li><strong>Experiment 1:</strong> Varying Epsilon [250k, 300k, 350k, 400k, 450k] with Fixed Delta = 10%</li>
+            <li><strong>Experiment 2:</strong> Varying Delta [5%, 10%, 15%, 20%] with Fixed Epsilon = 350k</li>
+            <li><strong>Goal:</strong> Show RW matches FPGrowth results across different parameters</li>
+        </ul>
+    </div>
+
+    <h2>✅ RW Correctness: Does RW Match FPGrowth?</h2>
+    <div class="graph-container">
+        <div id="epsilon_plot"></div>
+        <p><strong>Explanation:</strong> Shows what % of rules RW gives same answer as FPGrowth for each epsilon value. Higher = better.</p>
+    </div>
+
+    <div class="graph-container">
+        <div id="delta_plot"></div>
+        <p><strong>Explanation:</strong> Shows what % of rules RW gives same answer as FPGrowth for each delta value. Higher = better.</p>
+    </div>
+
+    <h2>⏱️ Runtime: RW Speedup vs FPGrowth</h2>
+    <div class="graph-container">
+        <div id="runtime_epsilon_plot"></div>
+        <p><strong>Explanation:</strong> Shows average runtime per algorithm. RW should be faster while maintaining correctness.</p>
+    </div>
+    <div class="graph-container">
+        <div id="runtime_delta_plot"></div>
+    </div>
+
+    <h2>📉 Parameter Impact on Results</h2>
+    <div class="graph-container">
+        <div id="param_impact_plot"></div>
+        <p><strong>Explanation:</strong> Shows how epsilon/delta values affect what % of rules each algorithm finds homogeneous.</p>
+    </div>
+
+    <h2>📈 Aggregated Summary Statistics</h2>
+    
+    <h3>✅ RW Correctness (Agreement with FPGrowth Ground Truth)</h3>
+    <div class="info-box">
+        <table border="1" class="dataframe summary-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Experiment</th>
+      <th>Epsilon</th>
+      <th>Delta (%)</th>
+      <th>Agreement Rate (%)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>250000.0</td>
+      <td></td>
+      <td>40.0</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>300000.0</td>
+      <td></td>
+      <td>60.0</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>350000.0</td>
+      <td></td>
+      <td>100.0</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>400000.0</td>
+      <td></td>
+      <td>100.0</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>450000.0</td>
+      <td></td>
+      <td>100.0</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td></td>
+      <td>5.0</td>
+      <td>50.0</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td></td>
+      <td>10.0</td>
+      <td>100.0</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td></td>
+      <td>15.0</td>
+      <td>100.0</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td></td>
+      <td>20.0</td>
+      <td>100.0</td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+    
+    <h3>⚡ Algorithm Performance Metrics</h3>
+    <div class="info-box">
+        <table border="1" class="dataframe summary-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Algorithm</th>
+      <th>Experiment</th>
+      <th>Epsilon</th>
+      <th>Delta (%)</th>
+      <th>Homogeneity Rate (%)</th>
+      <th>Avg Subgroups Checked</th>
+      <th>Avg Runtime (s)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FPGrowth</td>
+      <td>varying_epsilon</td>
+      <td>250000.0</td>
+      <td></td>
+      <td>30.0</td>
+      <td>3252.000000</td>
+      <td>10.382277</td>
+    </tr>
+    <tr>
+      <td>FPGrowth</td>
+      <td>varying_epsilon</td>
+      <td>300000.0</td>
+      <td></td>
+      <td>60.0</td>
+      <td>4001.600000</td>
+      <td>12.458054</td>
+    </tr>
+    <tr>
+      <td>FPGrowth</td>
+      <td>varying_epsilon</td>
+      <td>350000.0</td>
+      <td></td>
+      <td>100.0</td>
+      <td>5553.900000</td>
+      <td>16.386475</td>
+    </tr>
+    <tr>
+      <td>FPGrowth</td>
+      <td>varying_epsilon</td>
+      <td>400000.0</td>
+      <td></td>
+      <td>100.0</td>
+      <td>5553.900000</td>
+      <td>16.571894</td>
+    </tr>
+    <tr>
+      <td>FPGrowth</td>
+      <td>varying_epsilon</td>
+      <td>450000.0</td>
+      <td></td>
+      <td>100.0</td>
+      <td>5553.900000</td>
+      <td>16.722345</td>
+    </tr>
+    <tr>
+      <td>RW_Direct</td>
+      <td>varying_epsilon</td>
+      <td>250000.0</td>
+      <td></td>
+      <td>90.0</td>
+      <td>465.433333</td>
+      <td>2.374157</td>
+    </tr>
+    <tr>
+      <td>RW_Direct</td>
+      <td>varying_epsilon</td>
+      <td>300000.0</td>
+      <td></td>
+      <td>100.0</td>
+      <td>520.666667</td>
+      <td>2.603612</td>
+    </tr>
+    <tr>
+      <td>RW_Direct</td>
+      <td>varying_epsilon</td>
+      <td>350000.0</td>
+      <td></td>
+      <td>100.0</td>
+      <td>518.633333</td>
+      <td>2.579661</td>
+    </tr>
+    <tr>
+      <td>RW_Direct</td>
+      <td>varying_epsilon</td>
+      <td>400000.0</td>
+      <td></td>
+      <td>100.0</td>
+      <td>517.933333</td>
+      <td>2.611523</td>
+    </tr>
+    <tr>
+      <td>RW_Direct</td>
+      <td>varying_epsilon</td>
+      <td>450000.0</td>
+      <td></td>
+      <td>100.0</td>
+      <td>516.533333</td>
+      <td>2.612970</td>
+    </tr>
+    <tr>
+      <td>FPGrowth</td>
+      <td>varying_delta</td>
+      <td></td>
+      <td>5.0</td>
+      <td>50.0</td>
+      <td>16911.900000</td>
+      <td>43.982029</td>
+    </tr>
+    <tr>
+      <td>FPGrowth</td>
+      <td>varying_delta</td>
+      <td></td>
+      <td>10.0</td>
+      <td>100.0</td>
+      <td>5553.900000</td>
+      <td>16.696576</td>
+    </tr>
+    <tr>
+      <td>FPGrowth</td>
+      <td>varying_delta</td>
+      <td></td>
+      <td>15.0</td>
+      <td>100.0</td>
+      <td>2073.100000</td>
+      <td>7.091960</td>
+    </tr>
+    <tr>
+      <td>FPGrowth</td>
+      <td>varying_delta</td>
+      <td></td>
+      <td>20.0</td>
+      <td>100.0</td>
+      <td>890.400000</td>
+      <td>3.346855</td>
+    </tr>
+    <tr>
+      <td>RW_Direct</td>
+      <td>varying_delta</td>
+      <td></td>
+      <td>5.0</td>
+      <td>100.0</td>
+      <td>813.833333</td>
+      <td>2.901371</td>
+    </tr>
+    <tr>
+      <td>RW_Direct</td>
+      <td>varying_delta</td>
+      <td></td>
+      <td>10.0</td>
+      <td>100.0</td>
+      <td>513.866667</td>
+      <td>2.609826</td>
+    </tr>
+    <tr>
+      <td>RW_Direct</td>
+      <td>varying_delta</td>
+      <td></td>
+      <td>15.0</td>
+      <td>100.0</td>
+      <td>371.266667</td>
+      <td>2.447647</td>
+    </tr>
+    <tr>
+      <td>RW_Direct</td>
+      <td>varying_delta</td>
+      <td></td>
+      <td>20.0</td>
+      <td>100.0</td>
+      <td>256.466667</td>
+      <td>1.984875</td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+    <h2>📋 Detailed Results by Rule</h2>
+    <div class="info-box">
+        <p><strong>This table shows all individual test results. Use it to trace back which rule/treatment with which parameters produced each result.</strong></p>
+        <div class="table-container">
+        <table border="1" class="dataframe summary-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Experiment</th>
+      <th>Algorithm</th>
+      <th>Rule Condition</th>
+      <th>Treatment</th>
+      <th>Epsilon</th>
+      <th>Delta (%)</th>
+      <th>Delta (samples)</th>
+      <th>Homogeneous?</th>
+      <th>Subgroups Checked</th>
+      <th>Runtime (s)</th>
+      <th>Subset Size</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>False</td>
+      <td>8483</td>
+      <td>22.956622</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>567</td>
+      <td>3.418860</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>593</td>
+      <td>3.411138</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>612</td>
+      <td>3.451573</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>False</td>
+      <td>515</td>
+      <td>2.989191</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>False</td>
+      <td>126</td>
+      <td>0.425185</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>False</td>
+      <td>96</td>
+      <td>0.331805</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>False</td>
+      <td>17</td>
+      <td>0.211142</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>79</td>
+      <td>5.551449</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>219</td>
+      <td>1.596774</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>220</td>
+      <td>1.597569</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>220</td>
+      <td>1.601767</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>False</td>
+      <td>4640</td>
+      <td>13.331581</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>509</td>
+      <td>2.447585</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>549</td>
+      <td>2.531529</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>546</td>
+      <td>2.513377</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>False</td>
+      <td>630</td>
+      <td>3.317828</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>704</td>
+      <td>2.728635</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>758</td>
+      <td>2.805974</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>704</td>
+      <td>2.714666</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>47</td>
+      <td>5.654992</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>138</td>
+      <td>1.374942</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>138</td>
+      <td>1.365915</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>138</td>
+      <td>1.375370</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>False</td>
+      <td>8561</td>
+      <td>21.278101</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>667</td>
+      <td>3.249281</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>618</td>
+      <td>3.180496</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>574</td>
+      <td>3.041182</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>False</td>
+      <td>2718</td>
+      <td>7.371944</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>564</td>
+      <td>3.357237</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>533</td>
+      <td>3.234841</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>571</td>
+      <td>3.354441</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>2650</td>
+      <td>False</td>
+      <td>5244</td>
+      <td>12.111628</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>2650</td>
+      <td>True</td>
+      <td>559</td>
+      <td>2.637171</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>2650</td>
+      <td>True</td>
+      <td>533</td>
+      <td>2.609025</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>2650</td>
+      <td>True</td>
+      <td>548</td>
+      <td>2.627504</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>1603</td>
+      <td>9.259438</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>656</td>
+      <td>2.673580</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>648</td>
+      <td>2.681657</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>250000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>638</td>
+      <td>2.674489</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>False</td>
+      <td>7383</td>
+      <td>18.893089</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>530</td>
+      <td>3.252845</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>600</td>
+      <td>3.401684</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>527</td>
+      <td>3.251122</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>1926</td>
+      <td>9.937625</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>640</td>
+      <td>2.761952</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>575</td>
+      <td>2.663356</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>678</td>
+      <td>2.855437</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>79</td>
+      <td>5.595518</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>220</td>
+      <td>1.614283</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>226</td>
+      <td>1.587602</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>219</td>
+      <td>1.597261</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>False</td>
+      <td>4181</td>
+      <td>12.164972</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>553</td>
+      <td>2.536128</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>577</td>
+      <td>2.533058</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>571</td>
+      <td>2.590990</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>False</td>
+      <td>1022</td>
+      <td>5.127311</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>690</td>
+      <td>2.646133</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>706</td>
+      <td>2.680362</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>758</td>
+      <td>2.766064</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>47</td>
+      <td>5.633112</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>138</td>
+      <td>1.370848</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>138</td>
+      <td>1.386425</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>138</td>
+      <td>1.407300</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>False</td>
+      <td>3293</td>
+      <td>8.483049</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>601</td>
+      <td>3.103657</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>648</td>
+      <td>3.208448</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>600</td>
+      <td>3.120601</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>9956</td>
+      <td>25.558092</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>554</td>
+      <td>3.251605</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>609</td>
+      <td>3.369151</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>547</td>
+      <td>3.246689</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>2650</td>
+      <td>True</td>
+      <td>10526</td>
+      <td>23.929466</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>2650</td>
+      <td>True</td>
+      <td>547</td>
+      <td>2.625051</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>2650</td>
+      <td>True</td>
+      <td>564</td>
+      <td>2.652828</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>2650</td>
+      <td>True</td>
+      <td>548</td>
+      <td>2.619257</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>1603</td>
+      <td>9.258306</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>599</td>
+      <td>2.612213</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>664</td>
+      <td>2.707127</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>300000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>655</td>
+      <td>2.688886</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>10111</td>
+      <td>25.649278</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>587</td>
+      <td>3.373142</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>526</td>
+      <td>3.238787</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>605</td>
+      <td>3.431231</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>1926</td>
+      <td>9.870557</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>671</td>
+      <td>2.808725</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>671</td>
+      <td>2.776232</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>653</td>
+      <td>2.722366</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>79</td>
+      <td>5.454176</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>219</td>
+      <td>1.584233</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>213</td>
+      <td>1.593590</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>212</td>
+      <td>1.574960</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>7011</td>
+      <td>19.725977</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>555</td>
+      <td>2.501759</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>460</td>
+      <td>2.286547</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>517</td>
+      <td>2.453248</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>2354</td>
+      <td>10.743742</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>707</td>
+      <td>2.635642</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>709</td>
+      <td>2.651106</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>697</td>
+      <td>2.640879</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>47</td>
+      <td>5.630605</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>138</td>
+      <td>1.386167</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>138</td>
+      <td>1.376164</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>138</td>
+      <td>1.384130</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>11926</td>
+      <td>28.736485</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>677</td>
+      <td>3.247406</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>648</td>
+      <td>3.197604</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>644</td>
+      <td>3.184104</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>9956</td>
+      <td>25.134074</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>525</td>
+      <td>3.132777</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>531</td>
+      <td>3.176011</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>503</td>
+      <td>3.090255</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>2650</td>
+      <td>True</td>
+      <td>10526</td>
+      <td>23.692174</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>2650</td>
+      <td>True</td>
+      <td>540</td>
+      <td>2.595786</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>2650</td>
+      <td>True</td>
+      <td>558</td>
+      <td>2.650802</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>2650</td>
+      <td>True</td>
+      <td>571</td>
+      <td>2.697386</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>1603</td>
+      <td>9.227677</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>664</td>
+      <td>2.696945</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>624</td>
+      <td>2.622062</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>658</td>
+      <td>2.679772</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>10111</td>
+      <td>25.481546</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>591</td>
+      <td>3.404957</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>482</td>
+      <td>3.137161</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>591</td>
+      <td>3.364597</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>1926</td>
+      <td>9.812352</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>671</td>
+      <td>2.774977</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>614</td>
+      <td>2.690367</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>677</td>
+      <td>2.815097</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>79</td>
+      <td>5.477984</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>188</td>
+      <td>1.611323</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>219</td>
+      <td>1.593889</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>219</td>
+      <td>1.709242</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>7011</td>
+      <td>20.234663</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>548</td>
+      <td>2.534922</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>561</td>
+      <td>2.590270</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>526</td>
+      <td>2.489603</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>2354</td>
+      <td>11.367594</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>715</td>
+      <td>2.783231</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>713</td>
+      <td>2.733371</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>716</td>
+      <td>2.722270</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>47</td>
+      <td>5.766641</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>138</td>
+      <td>1.391465</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>138</td>
+      <td>1.407045</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>138</td>
+      <td>1.421690</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>11926</td>
+      <td>28.827203</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>615</td>
+      <td>3.123101</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>614</td>
+      <td>3.167928</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>613</td>
+      <td>3.143948</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>9956</td>
+      <td>25.457594</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>566</td>
+      <td>3.273222</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>570</td>
+      <td>3.311382</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>522</td>
+      <td>3.178555</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>2650</td>
+      <td>True</td>
+      <td>10526</td>
+      <td>23.975453</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>2650</td>
+      <td>True</td>
+      <td>555</td>
+      <td>2.647583</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>2650</td>
+      <td>True</td>
+      <td>513</td>
+      <td>2.561329</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>2650</td>
+      <td>True</td>
+      <td>543</td>
+      <td>2.626023</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>1603</td>
+      <td>9.317915</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>663</td>
+      <td>2.725198</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>664</td>
+      <td>2.715188</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>400000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>655</td>
+      <td>2.696764</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>10111</td>
+      <td>26.111408</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>562</td>
+      <td>3.360274</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>532</td>
+      <td>3.254282</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>647</td>
+      <td>3.575633</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>1926</td>
+      <td>10.002717</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>653</td>
+      <td>2.765854</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>675</td>
+      <td>2.815082</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>647</td>
+      <td>2.778429</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>79</td>
+      <td>5.511932</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>220</td>
+      <td>1.580434</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>219</td>
+      <td>1.592549</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>219</td>
+      <td>1.588648</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>7011</td>
+      <td>19.943504</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>521</td>
+      <td>2.463193</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>555</td>
+      <td>2.539203</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>524</td>
+      <td>2.481372</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>2354</td>
+      <td>11.264882</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>693</td>
+      <td>2.683638</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>697</td>
+      <td>2.730716</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>709</td>
+      <td>2.722756</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>47</td>
+      <td>5.904286</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>138</td>
+      <td>1.420335</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>138</td>
+      <td>1.459333</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>138</td>
+      <td>1.413311</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>11926</td>
+      <td>29.410099</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>618</td>
+      <td>3.134006</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>580</td>
+      <td>3.082795</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>614</td>
+      <td>3.164761</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>9956</td>
+      <td>25.597928</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>590</td>
+      <td>3.352379</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>568</td>
+      <td>3.278580</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>557</td>
+      <td>3.258370</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>2650</td>
+      <td>True</td>
+      <td>10526</td>
+      <td>24.076345</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>2650</td>
+      <td>True</td>
+      <td>502</td>
+      <td>2.539775</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>2650</td>
+      <td>True</td>
+      <td>536</td>
+      <td>2.612067</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>2650</td>
+      <td>True</td>
+      <td>575</td>
+      <td>2.699334</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>FPGrowth</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>1603</td>
+      <td>9.400351</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>608</td>
+      <td>2.672481</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>653</td>
+      <td>2.712940</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_epsilon</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>450000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>608</td>
+      <td>2.656563</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1755</td>
+      <td>True</td>
+      <td>43721</td>
+      <td>94.737714</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1755</td>
+      <td>True</td>
+      <td>860</td>
+      <td>3.695556</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1755</td>
+      <td>True</td>
+      <td>973</td>
+      <td>3.837626</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1755</td>
+      <td>True</td>
+      <td>949</td>
+      <td>3.846773</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1764</td>
+      <td>False</td>
+      <td>2730</td>
+      <td>12.785374</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1764</td>
+      <td>True</td>
+      <td>790</td>
+      <td>2.893023</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1764</td>
+      <td>True</td>
+      <td>859</td>
+      <td>2.986623</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1764</td>
+      <td>True</td>
+      <td>946</td>
+      <td>3.091771</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1585</td>
+      <td>True</td>
+      <td>1393</td>
+      <td>25.487887</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1585</td>
+      <td>True</td>
+      <td>544</td>
+      <td>1.931432</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1585</td>
+      <td>True</td>
+      <td>503</td>
+      <td>1.890433</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1585</td>
+      <td>True</td>
+      <td>503</td>
+      <td>1.883067</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1474</td>
+      <td>False</td>
+      <td>10549</td>
+      <td>26.969426</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1474</td>
+      <td>True</td>
+      <td>856</td>
+      <td>2.791743</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1474</td>
+      <td>True</td>
+      <td>872</td>
+      <td>2.870558</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1474</td>
+      <td>True</td>
+      <td>752</td>
+      <td>2.604467</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1585</td>
+      <td>False</td>
+      <td>4602</td>
+      <td>18.171479</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1585</td>
+      <td>True</td>
+      <td>948</td>
+      <td>2.976229</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1585</td>
+      <td>True</td>
+      <td>954</td>
+      <td>2.938881</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1585</td>
+      <td>True</td>
+      <td>923</td>
+      <td>2.922318</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1474</td>
+      <td>True</td>
+      <td>1327</td>
+      <td>26.446154</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1474</td>
+      <td>True</td>
+      <td>574</td>
+      <td>1.786145</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1474</td>
+      <td>True</td>
+      <td>573</td>
+      <td>1.773932</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1474</td>
+      <td>True</td>
+      <td>621</td>
+      <td>1.836977</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1585</td>
+      <td>True</td>
+      <td>48477</td>
+      <td>102.480313</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1585</td>
+      <td>True</td>
+      <td>867</td>
+      <td>3.346966</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1585</td>
+      <td>True</td>
+      <td>747</td>
+      <td>3.147010</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1585</td>
+      <td>True</td>
+      <td>858</td>
+      <td>3.327016</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1764</td>
+      <td>False</td>
+      <td>4914</td>
+      <td>11.790659</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1764</td>
+      <td>True</td>
+      <td>856</td>
+      <td>3.583902</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1764</td>
+      <td>True</td>
+      <td>892</td>
+      <td>3.672292</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1764</td>
+      <td>True</td>
+      <td>952</td>
+      <td>3.819367</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1325</td>
+      <td>True</td>
+      <td>43762</td>
+      <td>87.435542</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1325</td>
+      <td>True</td>
+      <td>937</td>
+      <td>3.178955</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1325</td>
+      <td>True</td>
+      <td>849</td>
+      <td>3.023437</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1325</td>
+      <td>True</td>
+      <td>853</td>
+      <td>3.010591</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1755</td>
+      <td>False</td>
+      <td>7644</td>
+      <td>33.515747</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1755</td>
+      <td>True</td>
+      <td>863</td>
+      <td>2.806031</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1755</td>
+      <td>True</td>
+      <td>866</td>
+      <td>2.792273</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>350000</td>
+      <td>5</td>
+      <td>1755</td>
+      <td>True</td>
+      <td>875</td>
+      <td>2.775743</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>10111</td>
+      <td>25.997107</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>540</td>
+      <td>3.346403</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>560</td>
+      <td>3.352013</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>596</td>
+      <td>3.422336</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>1926</td>
+      <td>10.019799</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>653</td>
+      <td>2.793153</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>682</td>
+      <td>2.858435</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>649</td>
+      <td>2.792457</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>79</td>
+      <td>5.553889</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>219</td>
+      <td>1.616246</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>219</td>
+      <td>1.622079</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>212</td>
+      <td>1.593434</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>7011</td>
+      <td>19.999241</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>548</td>
+      <td>2.565486</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>593</td>
+      <td>2.607268</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>540</td>
+      <td>2.523461</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>2354</td>
+      <td>11.198849</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>686</td>
+      <td>2.703376</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>699</td>
+      <td>2.674886</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>711</td>
+      <td>2.703973</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>47</td>
+      <td>5.746256</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>138</td>
+      <td>1.387765</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>138</td>
+      <td>1.377841</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>2949</td>
+      <td>True</td>
+      <td>138</td>
+      <td>1.427998</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>11926</td>
+      <td>29.163099</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>562</td>
+      <td>3.000377</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>585</td>
+      <td>3.099850</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3171</td>
+      <td>True</td>
+      <td>625</td>
+      <td>3.142567</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>9956</td>
+      <td>25.504065</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>579</td>
+      <td>3.349305</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>488</td>
+      <td>3.107525</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3529</td>
+      <td>True</td>
+      <td>513</td>
+      <td>3.142167</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>2650</td>
+      <td>True</td>
+      <td>10526</td>
+      <td>24.341541</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>2650</td>
+      <td>True</td>
+      <td>540</td>
+      <td>2.632457</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>2650</td>
+      <td>True</td>
+      <td>549</td>
+      <td>2.667247</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>2650</td>
+      <td>True</td>
+      <td>556</td>
+      <td>2.678938</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>1603</td>
+      <td>9.441918</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>617</td>
+      <td>2.667693</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>642</td>
+      <td>2.730965</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>350000</td>
+      <td>10</td>
+      <td>3511</td>
+      <td>True</td>
+      <td>639</td>
+      <td>2.707070</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>5266</td>
+      <td>True</td>
+      <td>3806</td>
+      <td>11.334737</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>5266</td>
+      <td>True</td>
+      <td>488</td>
+      <td>3.456124</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>5266</td>
+      <td>True</td>
+      <td>503</td>
+      <td>3.498335</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>5266</td>
+      <td>True</td>
+      <td>446</td>
+      <td>3.258725</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>5294</td>
+      <td>True</td>
+      <td>541</td>
+      <td>3.903931</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>5294</td>
+      <td>True</td>
+      <td>491</td>
+      <td>2.601251</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>5294</td>
+      <td>True</td>
+      <td>463</td>
+      <td>2.538214</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>5294</td>
+      <td>True</td>
+      <td>462</td>
+      <td>2.541710</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>4757</td>
+      <td>True</td>
+      <td>13</td>
+      <td>2.237238</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>4757</td>
+      <td>True</td>
+      <td>81</td>
+      <td>1.461313</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>4757</td>
+      <td>True</td>
+      <td>81</td>
+      <td>1.465733</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>4757</td>
+      <td>True</td>
+      <td>81</td>
+      <td>1.460894</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>4424</td>
+      <td>True</td>
+      <td>2578</td>
+      <td>8.661378</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>4424</td>
+      <td>True</td>
+      <td>388</td>
+      <td>2.408151</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>4424</td>
+      <td>True</td>
+      <td>424</td>
+      <td>2.456789</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>4424</td>
+      <td>True</td>
+      <td>426</td>
+      <td>2.436413</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>4757</td>
+      <td>True</td>
+      <td>777</td>
+      <td>4.683735</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>4757</td>
+      <td>True</td>
+      <td>522</td>
+      <td>2.428550</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>4757</td>
+      <td>True</td>
+      <td>479</td>
+      <td>2.361654</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>4757</td>
+      <td>True</td>
+      <td>518</td>
+      <td>2.434719</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>4424</td>
+      <td>True</td>
+      <td>12</td>
+      <td>2.322915</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>4424</td>
+      <td>True</td>
+      <td>67</td>
+      <td>1.320222</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>4424</td>
+      <td>True</td>
+      <td>67</td>
+      <td>1.315983</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>4424</td>
+      <td>True</td>
+      <td>67</td>
+      <td>1.315614</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>4757</td>
+      <td>True</td>
+      <td>4649</td>
+      <td>12.739990</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>4757</td>
+      <td>True</td>
+      <td>417</td>
+      <td>2.824732</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>4757</td>
+      <td>True</td>
+      <td>392</td>
+      <td>2.730164</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>4757</td>
+      <td>True</td>
+      <td>425</td>
+      <td>2.845898</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>5294</td>
+      <td>True</td>
+      <td>3762</td>
+      <td>10.965880</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>5294</td>
+      <td>True</td>
+      <td>426</td>
+      <td>3.123650</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>5294</td>
+      <td>True</td>
+      <td>457</td>
+      <td>3.184481</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>5294</td>
+      <td>True</td>
+      <td>474</td>
+      <td>3.217558</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>3976</td>
+      <td>True</td>
+      <td>4123</td>
+      <td>10.581813</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>3976</td>
+      <td>True</td>
+      <td>468</td>
+      <td>2.580144</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>3976</td>
+      <td>True</td>
+      <td>439</td>
+      <td>2.523097</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>3976</td>
+      <td>True</td>
+      <td>468</td>
+      <td>2.588173</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>5266</td>
+      <td>True</td>
+      <td>470</td>
+      <td>3.487979</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>5266</td>
+      <td>True</td>
+      <td>378</td>
+      <td>2.370502</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>5266</td>
+      <td>True</td>
+      <td>364</td>
+      <td>2.317514</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>350000</td>
+      <td>15</td>
+      <td>5266</td>
+      <td>True</td>
+      <td>376</td>
+      <td>2.363104</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>7022</td>
+      <td>True</td>
+      <td>1566</td>
+      <td>5.217175</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>7022</td>
+      <td>True</td>
+      <td>338</td>
+      <td>2.947118</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>7022</td>
+      <td>True</td>
+      <td>364</td>
+      <td>3.045060</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>Exercise=Daily or almost every day</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>7022</td>
+      <td>True</td>
+      <td>324</td>
+      <td>2.920316</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>7059</td>
+      <td>True</td>
+      <td>253</td>
+      <td>1.863558</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>7059</td>
+      <td>True</td>
+      <td>276</td>
+      <td>2.290503</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>7059</td>
+      <td>True</td>
+      <td>289</td>
+      <td>2.305695</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>7059</td>
+      <td>True</td>
+      <td>266</td>
+      <td>2.279137</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>6343</td>
+      <td>True</td>
+      <td>0</td>
+      <td>0.988345</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>6343</td>
+      <td>True</td>
+      <td>0</td>
+      <td>0.060041</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>6343</td>
+      <td>True</td>
+      <td>0</td>
+      <td>0.059057</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>6343</td>
+      <td>True</td>
+      <td>0</td>
+      <td>0.061956</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>5899</td>
+      <td>True</td>
+      <td>1346</td>
+      <td>4.548816</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>5899</td>
+      <td>True</td>
+      <td>293</td>
+      <td>2.211850</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>5899</td>
+      <td>True</td>
+      <td>351</td>
+      <td>2.342641</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>UndergradMajor=A natural science (ex. biology, chemistry, physics)</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>5899</td>
+      <td>True</td>
+      <td>362</td>
+      <td>2.361898</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>6343</td>
+      <td>True</td>
+      <td>339</td>
+      <td>2.113155</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>6343</td>
+      <td>True</td>
+      <td>320</td>
+      <td>2.121489</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>6343</td>
+      <td>True</td>
+      <td>326</td>
+      <td>2.131863</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>FormalEducation=Other doctoral degree (Ph.D, Ed.D., etc.)</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>6343</td>
+      <td>True</td>
+      <td>327</td>
+      <td>2.123002</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>5899</td>
+      <td>True</td>
+      <td>0</td>
+      <td>1.040398</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>5899</td>
+      <td>True</td>
+      <td>0</td>
+      <td>0.053031</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>5899</td>
+      <td>True</td>
+      <td>0</td>
+      <td>0.053039</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>RaceEthnicity=White or of European descent</td>
+      <td>DevType=Engineering manager</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>5899</td>
+      <td>True</td>
+      <td>0</td>
+      <td>0.052391</td>
+      <td>29496</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>6343</td>
+      <td>True</td>
+      <td>1876</td>
+      <td>5.820815</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>6343</td>
+      <td>True</td>
+      <td>320</td>
+      <td>2.615748</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>6343</td>
+      <td>True</td>
+      <td>337</td>
+      <td>2.656114</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Student=No</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>6343</td>
+      <td>True</td>
+      <td>351</td>
+      <td>2.757965</td>
+      <td>31715</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>7059</td>
+      <td>True</td>
+      <td>1523</td>
+      <td>5.069434</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>7059</td>
+      <td>True</td>
+      <td>319</td>
+      <td>2.901097</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>7059</td>
+      <td>True</td>
+      <td>318</td>
+      <td>2.878422</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>SexualOrientation=Straight or heterosexual</td>
+      <td>Exercise=3 - 4 times per week</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>7059</td>
+      <td>True</td>
+      <td>311</td>
+      <td>2.856612</td>
+      <td>35296</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>5301</td>
+      <td>True</td>
+      <td>1894</td>
+      <td>5.356975</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>5301</td>
+      <td>True</td>
+      <td>349</td>
+      <td>2.336781</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>5301</td>
+      <td>True</td>
+      <td>369</td>
+      <td>2.393527</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Dependents=No</td>
+      <td>HoursComputer=5 - 8 hours</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>5301</td>
+      <td>True</td>
+      <td>363</td>
+      <td>2.369716</td>
+      <td>26508</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>FPGrowth</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>7022</td>
+      <td>True</td>
+      <td>107</td>
+      <td>1.449880</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>7022</td>
+      <td>True</td>
+      <td>278</td>
+      <td>2.118097</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>7022</td>
+      <td>True</td>
+      <td>277</td>
+      <td>2.116600</td>
+      <td>35112</td>
+    </tr>
+    <tr>
+      <td>varying_delta</td>
+      <td>RW_Direct</td>
+      <td>Gender=Male</td>
+      <td>UndergradMajor=A humanities discipline (ex. literature, history, philosophy)</td>
+      <td>350000</td>
+      <td>20</td>
+      <td>7022</td>
+      <td>True</td>
+      <td>266</td>
+      <td>2.125483</td>
+      <td>35112</td>
+    </tr>
+  </tbody>
+</table>
+        </div>
+    </div>
+
+    <script>
+        var epsilon_plot = {"data":[{"fill":"tozeroy","line":{"color":"green","width":4},"marker":{"size":12},"mode":"lines+markers","name":"RW Correctness","x":[250000.0,300000.0,350000.0,400000.0,450000.0],"y":[40.0,60.0,100.0,100.0,100.0],"type":"scatter"}],"layout":{"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmapgl":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmapgl"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"yaxis":{"title":{"text":"Agreement with FPGrowth (%)"},"range":[0,105]},"font":{"size":14},"title":{"text":"RW Correctness vs Epsilon (FPGrowth = Ground Truth)\u003cbr\u003e\u003csub\u003eFixed Delta = 10%\u003c\u002fsub\u003e"},"xaxis":{"title":{"text":"Epsilon"}},"height":500}};
+        Plotly.newPlot('epsilon_plot', epsilon_plot.data, epsilon_plot.layout);
+
+        var delta_plot = {"data":[{"fill":"tozeroy","line":{"color":"green","width":4},"marker":{"size":12},"mode":"lines+markers","name":"RW Correctness","x":[5.0,10.0,15.0,20.0],"y":[50.0,100.0,100.0,100.0],"type":"scatter"}],"layout":{"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmapgl":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmapgl"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"yaxis":{"title":{"text":"Agreement with FPGrowth (%)"},"range":[0,105]},"xaxis":{"title":{"text":"Delta (% of Dataset)"},"tickformat":".0f","ticksuffix":"%"},"font":{"size":14},"title":{"text":"RW Correctness vs Delta (FPGrowth = Ground Truth)\u003cbr\u003e\u003csub\u003eFixed Epsilon = 350k\u003c\u002fsub\u003e"},"height":500}};
+        Plotly.newPlot('delta_plot', delta_plot.data, delta_plot.layout);
+
+        var runtime_epsilon = {"data":[{"name":"FPGrowth","text":[10.38,12.46,16.39,16.57,16.72],"textposition":"outside","x":[250000.0,300000.0,350000.0,400000.0,450000.0],"y":[10.382277379100014,12.458053900099912,16.386474550100047,16.57189435420014,16.72234502500005],"type":"bar"},{"name":"RW_Direct","text":[2.37,2.6,2.58,2.61,2.61],"textposition":"outside","x":[250000.0,300000.0,350000.0,400000.0,450000.0],"y":[2.374157001399999,2.6036121250333357,2.5796606224331904,2.6115232611000163,2.612969797166594],"type":"bar"}],"layout":{"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmapgl":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmapgl"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"font":{"size":14},"title":{"text":"Runtime: FPGrowth vs RW - Varying Epsilon\u003cbr\u003e\u003csub\u003eShows RW speedup\u003c\u002fsub\u003e"},"xaxis":{"title":{"text":"Epsilon"}},"yaxis":{"title":{"text":"Average Runtime (seconds)"}},"height":500,"barmode":"group"}};
+        Plotly.newPlot('runtime_epsilon_plot', runtime_epsilon.data, runtime_epsilon.layout);
+
+        var runtime_delta = {"data":[{"name":"FPGrowth","text":[43.98,16.7,7.09,3.35],"textposition":"outside","x":[5.0,10.0,15.0,20.0],"y":[43.98202942499993,16.69657634589985,7.091959729100199,3.3468551207001838],"type":"bar"},{"name":"RW_Direct","text":[2.9,2.61,2.45,1.98],"textposition":"outside","x":[5.0,10.0,15.0,20.0],"y":[2.901371239033385,2.609825763933441,2.4476471681000174,1.9848750015000103],"type":"bar"}],"layout":{"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmapgl":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmapgl"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"xaxis":{"title":{"text":"Delta (% of Dataset)"},"tickformat":".0f","ticksuffix":"%"},"font":{"size":14},"title":{"text":"Runtime: FPGrowth vs RW - Varying Delta\u003cbr\u003e\u003csub\u003eShows RW speedup\u003c\u002fsub\u003e"},"yaxis":{"title":{"text":"Average Runtime (seconds)"}},"height":500,"barmode":"group"}};
+        Plotly.newPlot('runtime_delta_plot', runtime_delta.data, runtime_delta.layout);
+
+        var param_impact = {"data":[{"mode":"lines+markers","name":"FPGrowth","showlegend":true,"x":[250000.0,300000.0,350000.0,400000.0,450000.0],"y":[30.0,60.0,100.0,100.0,100.0],"type":"scatter","xaxis":"x","yaxis":"y"},{"mode":"lines+markers","name":"RW_Direct","showlegend":true,"x":[250000.0,300000.0,350000.0,400000.0,450000.0],"y":[90.0,100.0,100.0,100.0,100.0],"type":"scatter","xaxis":"x","yaxis":"y"},{"mode":"lines+markers","name":"FPGrowth","showlegend":false,"x":[5.0,10.0,15.0,20.0],"y":[50.0,100.0,100.0,100.0],"type":"scatter","xaxis":"x2","yaxis":"y2"},{"mode":"lines+markers","name":"RW_Direct","showlegend":false,"x":[5.0,10.0,15.0,20.0],"y":[100.0,100.0,100.0,100.0],"type":"scatter","xaxis":"x2","yaxis":"y2"}],"layout":{"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmapgl":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmapgl"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"xaxis":{"anchor":"y","domain":[0.0,0.425],"title":{"text":"Epsilon"}},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"% Rules Homogeneous"}},"xaxis2":{"anchor":"y2","domain":[0.575,1.0],"title":{"text":"Delta (%)"},"tickformat":".0f","ticksuffix":"%"},"yaxis2":{"anchor":"x2","domain":[0.0,1.0],"title":{"text":"% Rules Homogeneous"}},"annotations":[{"font":{"size":16},"showarrow":false,"text":"Impact of Epsilon","x":0.2125,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"},{"font":{"size":16},"showarrow":false,"text":"Impact of Delta","x":0.7875,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"}],"title":{"text":"Parameter Sensitivity: How Epsilon\u002fDelta Affect Results\u003cbr\u003e\u003csub\u003e% of rules where algorithm found homogeneity\u003c\u002fsub\u003e"},"font":{"size":14},"height":500}};
+        Plotly.newPlot('param_impact_plot', param_impact.data, param_impact.layout);
+    </script>
+
+    <footer style="text-align: center; margin-top: 50px; padding: 20px; color: #7f8c8d;">
+        <p>Generated on 2026-02-10 09:51:00</p>
+    </footer>
+</body>
+</html>

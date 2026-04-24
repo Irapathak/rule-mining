@@ -1,0 +1,14 @@
+{
+  "dataset": "so",
+  "full_dataset_path": "/Users/irapathak/Downloads/stackoverflow_not_encoded.csv",
+  "rules_path": "/Users/irapathak/Downloads/Rule_Homogenity-master/algorithms/Chosen10Treatments.json",
+  "target_col": "ConvertedSalary",
+  "treatment_col": "TempTreatment",
+  "delta": 100,
+  "epsilon_base": 520000.0,
+  "total_rules": 10,
+  "valid_rules": 10,
+  "settings_count": 15,
+  "seeds_per_setting": 25,
+  "total_runs": 375
+}

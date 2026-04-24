@@ -1,0 +1,2 @@
+runtime_sec_mean_all_runs,runtime_sec_var_all_runs,num_subgroups_mean_all_runs,num_subgroups_var_all_runs,baseline_runtime_mean_sec,baseline_runtime_std_sec,baseline_num_subgroups_mean,baseline_num_subgroups_std,precision_proxy,specificity_proxy,TP_proxy,FP_proxy,TN_proxy,FN_proxy
+2.991348390026018,0.4584553118770488,270.12,797.0015999999962,1.6041398984007538,0.1025773123456437,262.04,13.759302307893378,,1.0,0,0,375,0
