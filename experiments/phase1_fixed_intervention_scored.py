@@ -75,6 +75,12 @@ def main() -> None:
     
     p.add_argument("--delta", type=int, default=5000)
     p.add_argument("--alpha", type=float, default=0.5)
+    p.add_argument(
+        "--min-utility",
+        type=float,
+        default=None,
+        help="If set, keep only rules with utility >= this threshold in output CSV.",
+    )
     args = p.parse_args()
 
     if args.raw_dataset is not None:
@@ -146,17 +152,23 @@ def main() -> None:
                 if util is not None and np.isfinite(util)
                 else np.nan
             )
-            rows.append(
-                {
-                    "psi_int_attr": args.intervention_col,
-                    "psi_int_value": intervention_label,
-                    "psi_grp_json": pat_key,
-                    "num_predicates": len(pat),
-                    "coverage": cov,
-                    "utility": float(util) if util is not None and np.isfinite(util) else np.nan,
-                    "score": float(score) if np.isfinite(score) else np.nan,
-                }
-            )
+            util_f = float(util) if util is not None and np.isfinite(util) else np.nan
+            keep = True
+            if args.min_utility is not None:
+                keep = bool(np.isfinite(util_f) and util_f >= float(args.min_utility))
+
+            if keep:
+                rows.append(
+                    {
+                        "psi_int_attr": args.intervention_col,
+                        "psi_int_value": intervention_label,
+                        "psi_grp_json": pat_key,
+                        "num_predicates": len(pat),
+                        "coverage": cov,
+                        "utility": util_f,
+                        "score": float(score) if np.isfinite(score) else np.nan,
+                    }
+                )
             seen_pat_mask.add(key)
 
         if i == len(features):

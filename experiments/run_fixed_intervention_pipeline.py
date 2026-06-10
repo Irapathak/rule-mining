@@ -191,7 +191,7 @@ def run_rw_once(
         contextlib.redirect_stdout(io.StringIO()) if quiet else contextlib.nullcontext()
     )
     with ctx:
-        is_h, checked = _homog_rw_direct(
+        is_h, checked, _walks = _homog_rw_direct(
             df,
             treatment_col=treatment_col,
             outcome_col=outcome_col,

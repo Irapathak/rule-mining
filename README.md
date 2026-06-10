@@ -24,6 +24,10 @@ Then run the main script from the repo root:
 python algorithms/all_subgroups_loop.py
 ```
 
+## Stack Overflow homogeneity pipeline (Phase 1 → prune → brute force / greedy / ε-greedy)
+
+See **[PIPELINE.md](PIPELINE.md)** for step-by-step commands. Core experiment entry points live in **`experiments/core/`**.
+
 ## Layout
 
 - **configs/** – dataset and run configuration (paths are inside the repo)
@@ -33,3 +37,5 @@ python algorithms/all_subgroups_loop.py
 - **article_figures/** – notebook to generate figures from result CSVs
 - **ablation_results/** – ablation result CSVs and reports
 - **acs/** – sample ACS dataset (included); other datasets go under **data/** (see config)
+- **experiments/core/** – brute force, greedy, and ε-greedy comparison scripts
+- **PIPELINE.md** – Phase 1, RW prune, and three experiment runs

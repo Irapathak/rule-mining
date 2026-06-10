@@ -177,6 +177,7 @@ def mine_top_k_homogeneous_rules(
     attribute_weights: Optional[Dict[str, float]] = None,
     rng: Optional[random.Random] = None,
 ) -> Tuple[bool, int, Dict[str, Any], List[Dict[str, Any]]]:
+
     rng = rng or random.Random()
     ate_all = calculate_ate_safe(df, treatment_col, outcome_col, delta)
     max_outcome = pd.to_numeric(df[outcome_col], errors="coerce").max()

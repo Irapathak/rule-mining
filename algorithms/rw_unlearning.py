@@ -42,8 +42,12 @@ def _homog_rw_direct(
         rng: Optional[random.Random] = None,
         attribute_weights: Optional[Dict[str, float]] = None,
         **_: object,                     # ← swallow future params safely
-) -> Tuple[bool, int]:
-
+) -> Tuple[bool, int, int]:
+    """
+    Returns (is_homogeneous, checked_subgroups, walks_completed).
+    ``walks_completed`` counts started outer-loop random walks (root draws), including
+    the walk that triggers an early ``False`` exit.
+    """
 
     rng = rng or random.Random()
 
@@ -91,7 +95,7 @@ def _homog_rw_direct(
         root_indices.append(i)
 
     if not root_indices:
-        return True, 0  # nothing valid to explore
+        return True, 0, 0  # nothing valid to explore
 
     root_scores = np.array(root_scores, dtype=float)
     root_probs = root_scores / np.sum(root_scores)  # guaranteed finite now
@@ -122,7 +126,9 @@ def _homog_rw_direct(
     # ------------------ WALKS ------------------
     chosen_roots = rng.choices(range(len(root_indices)), weights=root_probs, k=k_walks)
 
+    walks_completed = 0
     for r in chosen_roots:
+        walks_completed += 1
         start_idx = root_indices[r]
         mask = X[:, start_idx]
         idxs = {start_idx}
@@ -132,7 +138,7 @@ def _homog_rw_direct(
         if cate is not None and abs(cate - ate_all) > epsilon:
             print(f"Breaking Subgroup: "
                   f"{ {lookup[col_names[i]][0]: lookup[col_names[i]][1] for i in idxs} }")
-            return False, checked
+            return False, checked, walks_completed
 
         # ---------- GREEDY EXPANSION ----------
         for _ in range(max_depth):
@@ -188,10 +194,10 @@ def _homog_rw_direct(
             if best_gain > epsilon:
                 print(f"Breaking Subgroup: "
                       f"{ {lookup[col_names[i]][0]: lookup[col_names[i]][1] for i in idxs} }")
-                return False, checked
+                return False, checked, walks_completed
 
     print(f"Total checked: {checked}")
-    return True, checked
+    return True, checked, walks_completed
 
 
 
@@ -216,7 +222,7 @@ def calc_utility_for_subgroups(
     if outcome_col is None: raise ValueError("Need outcome_col")
     if utility_all is None: raise ValueError("Need utility_all for RW")
     if mode != 1:
-        return _homog_rw_direct(
+        is_h, checked, _walks = _homog_rw_direct(
             df,
             treatment_col=treatment_col,
             outcome_col=outcome_col,
@@ -228,4 +234,5 @@ def calc_utility_for_subgroups(
             rng=rng,
             attribute_weights=attribute_weights
         )
+        return is_h, checked
     return [], 0
